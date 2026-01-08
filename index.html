@@ -8,216 +8,34 @@
     <script src="https://unpkg.com/lucide@latest"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
-        body { font-family: 'Inter', sans-serif; }
-        .tab-content { display: none; }
-        .tab-content.active { display: block; }
-        .nav-item.active { color: #16a34a; }
-        .nav-item { transition: color 0.2s; }
-        #custom-alert { display: none; }
-    </style>
-</head>
-<body class="bg-gray-50 text-gray-900 pb-20">
-
-    <!-- Header -->
-    <header class="bg-green-700 text-white p-6 shadow-lg">
-        <h1 class="text-2xl font-bold flex items-center gap-2">
-            <i data-lucide="globe" class="text-yellow-400"></i> NaijaPro Gain
-        </h1>
-        <p class="text-sm opacity-90 mt-1">Nigeria's #1 All-State Professional Growth Platform</p>
-    </header>
-
-    <!-- Custom Alert Modal -->
-    <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/50">
-        <div class="bg-white rounded-xl p-6 max-w-sm w-full shadow-2xl">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Attention</h3>
-            <p id="alert-message" class="text-sm text-gray-600 mb-6"></p>
-            <button onclick="closeAlert()" class="w-full bg-green-600 text-white font-bold py-2 rounded-lg">OK</button>
-        </div>
-    </div>
-
-    <main class="max-w-md mx-auto p-4">
-        
-        <!-- HOME TAB -->
-        <section id="tab-home" class="tab-content active space-y-6">
-            <!-- Professional Alert -->
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-md shadow-sm">
-                <div class="flex gap-3">
-                    <i data-lucide="shield-check" class="text-blue-500 shrink-0"></i>
-                    <div>
-                        <h3 class="font-bold text-blue-800 text-sm">Professional Use Only</h3>
-                        <p class="text-xs text-blue-700 mt-1">
-                            This platform is strictly for business owners using WhatsApp Business/Telegram. Not for personal "vibes" or friendly use.
-                        </p>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Registration Form Container -->
-            <div id="form-container" class="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="text-green-600"></i> Join the All-State List
-                </h2>
-              
-
-                        <form id="registration-form" class="space-y-4" 
-      action="https://docs.google.com/forms/d/e/1FAIpQLSc1Yz0jF5wANDrrZe_DgU5yMx6cWX_2BgzI8gNUHQUTe4XQCQ/viewform?usp=pp_url&entry.403300635=NAME&entry.1493637334=WHATSAPP&entry.50410248=CAT&entry.1635387367=STATE/formResponse" 
-      method="POST" 
-      target="hidden_iframe">
-                            
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Business/Brand Name</label>
-                        <input required type="text" name=”entry.403300635” id="business-name" placeholder="e.g. Kola's Kitchen" 
-                            class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                    </div>
-
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">WhatsApp Number</label>
-                        <input required type="tel" name=”entry.1493637334” id="whatsapp-number" placeholder="e.g. 08012345678" 
-                            class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg focus:ring-2 focus:ring-green-500 outline-none">
-                    </div>
-
-                    <div class="grid grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">Category</label>
-                            <select required name=”entry.50410248” id="category-select" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-semibold text-gray-600 uppercase mb-1">State</label>
-                            <select required name=”entry.1635387367” id="state-select" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-lg text-sm">
-                                <option value="">Select...</option>
-                            </select>
-                        </div>
-                    </div>
-
-                    <div class="bg-gray-50 p-3 rounded-lg border border-gray-200">
-                        <div class="flex items-start gap-2">
-                            <input type="checkbox" id="consent-checkbox" class="mt-1">
-                            <label for="consent-checkbox" class="text-[10px] leading-relaxed text-gray-600">
-                                I agree to be added to the public contact list. I understand this is for <strong>commercial networking only</strong>. I acknowledge that: 
-                                1) My data is provided voluntarily. 
-                                2) No contacts were added manually or without consent. 
-                                3) I am responsible for my own security against spam/scams.
-                            </label>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="w-full bg-green-600 text-white font-bold py-3 rounded-lg hover:bg-green-700 transition shadow-lg">
-                        SUBMIT TO ALL-STATE LIST
-                    </button>
-                </form>
-            </div>
-
-            <!-- Success State -->
-            <div id="success-container" class="hidden bg-white rounded-xl shadow-md p-8 text-center border-2 border-green-100">
-                <i data-lucide="check-circle-2" class="w-16 h-16 text-green-500 mx-auto mb-4"></i>
-                <h2 class="text-xl font-bold text-gray-800">Registration Successful!</h2>
-                <p class="text-sm text-gray-600 mt-2" id="success-message"></p>
-                <button onclick="resetForm()" class="mt-6 text-green-600 font-semibold text-sm underline">
-                    Register another business
-                </button>
-            </div>
-
-            <!-- State-Specific Section -->
-            <div class="bg-white rounded-xl shadow-md p-6">
-                <h2 class="font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="map-pin" class="text-orange-500"></i> Specific State Gains
-                </h2>
-                <p class="text-xs text-gray-500 mb-4">Select a state to get a customized gain link for that region only.</p>
-                <div class="grid grid-cols-2 gap-2" id="state-buttons">
-                    <!-- Buttons generated by JS -->
-                </div>
-            </div>
-        </section>
-
-        <!-- DOWNLOAD TAB -->
-        <section id="tab-download" class="tab-content space-y-4">
-            <h2 class="text-xl font-bold">Available Lists</h2>
-            <p class="text-sm text-gray-600">Download the latest compiled VCF files based on your interest.</p>
-            
-            <div id="download-lists" class="space-y-4">
-                <!-- Lists generated by JS -->
-            </div>
-        </section>
-
-        <!-- SAFETY TAB -->
-        <section id="tab-safety" class="tab-content space-y-4">
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-md">
-                <h2 class="text-red-800 font-bold flex items-center gap-2">
-                    <i data-lucide="alert-triangle"></i> Privacy & Safety Hub
-                </h2>
-            </div>
-            
-            <div class="bg-white p-5 rounded-xl shadow-sm space-y-4 text-sm leading-relaxed">
-                <div class="space-y-2">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                        <i data-lucide="lock" class="text-green-600 w-4 h-4"></i> Preventing Scams
-                    </h3>
-                    <ul class="list-disc ml-5 text-gray-600 space-y-1">
-                        <li>Enable <strong>Two-Step Verification</strong> on your WhatsApp immediately.</li>
-                        <li>Never share your 6-digit WhatsApp code with anyone.</li>
-                        <li>Be wary of "Investment" or "Double your Money" schemes.</li>
-                        <li>Use the <strong>Archive</strong> feature to manage unknown chats.</li>
-                    </ul>
-                </div>
-
-                <div class="space-y-2">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                        <i data-lucide="info" class="text-blue-600 w-4 h-4"></i> Data Ethics Statement
-                    </h3>
-                    <p class="text-gray-600 text-xs">
-                        This platform functions as a voluntary public directory. By submitting your details, you are providing <strong>explicit consent</strong> for your number to be shared with other professionals for business networking. We do not scrape data or add contacts without their knowledge.
-                    </p>
-                </div>
-
-                <div class="bg-gray-100 p-3 rounded-lg text-[11px] text-gray-500">
-                    <strong>Admin Tip:</strong> If you receive spam, report the number directly to WhatsApp. You can also request to have your number removed from our next file by contacting support.
-                </div>
-            </div>
-        </section>
-    </main>
-
-    <!-- Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 flex justify-around items-center px-4 shadow-2xl h-16 z-40">
-        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center p-2 flex-1" data-tab="home">
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>NaijaPro Gain - Professional Growth Platform</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap');
         body { font-family: 'Inter', sans-serif; -webkit-tap-highlight-color: transparent; }
         .tab-content { display: none; }
-        .tab-content.active { display: block; animation: fadeIn 0.3s ease-in-out; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .tab-content.active { display: block; animation: slideUp 0.3s ease-out; }
+        @keyframes slideUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .nav-item.active { color: #16a34a; }
-        .nav-item { transition: color 0.2s; }
         #custom-alert { display: none; }
+        .loading-spinner { border: 3px solid #f3f3f3; border-top: 3px solid #16a34a; border-radius: 50%; width: 20px; height: 20px; animation: spin 1s linear infinite; display: inline-block; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body class="bg-gray-50 text-gray-900 pb-24">
 
     <!-- Header -->
-    <header class="bg-green-700 text-white p-6 shadow-lg sticky top-0 z-30">
+    <header class="bg-green-700 text-white p-6 shadow-md sticky top-0 z-30">
         <div class="max-w-md mx-auto">
             <h1 class="text-2xl font-bold flex items-center gap-2">
                 <i data-lucide="globe" class="text-yellow-400"></i> NaijaPro Gain
             </h1>
-            <p class="text-xs opacity-90 mt-1">Nigeria's #1 All-State Professional Growth Platform</p>
+            <p class="text-[10px] uppercase tracking-widest opacity-80 mt-1 font-semibold">Nigeria's Premium Professional Network</p>
         </div>
     </header>
 
     <!-- Custom Alert Modal -->
     <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
-        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl scale-in">
-            <h3 class="text-lg font-bold text-gray-900 mb-2">Attention</h3>
-            <p id="alert-message" class="text-sm text-gray-600 mb-6 leading-relaxed"></p>
-            <button onclick="closeAlert()" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 rounded-xl transition-colors">OK</button>
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl">
+            <h3 class="text-lg font-bold text-gray-900 mb-2">Notice</h3>
+            <p id="alert-message" class="text-sm text-gray-600 mb-6"></p>
+            <button onclick="closeAlert()" class="w-full bg-green-600 text-white font-bold py-3 rounded-xl transition-all active:scale-95">OK</button>
         </div>
     </div>
 
@@ -225,239 +43,170 @@
         
         <!-- HOME TAB -->
         <section id="tab-home" class="tab-content active space-y-6">
-            <!-- Professional Alert -->
-            <div class="bg-blue-50 border-l-4 border-blue-500 p-4 rounded-r-xl shadow-sm">
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 p-4 rounded-2xl shadow-lg text-white">
                 <div class="flex gap-3">
-                    <i data-lucide="shield-check" class="text-blue-500 shrink-0"></i>
+                    <i data-lucide="shield-check" class="text-blue-200 shrink-0"></i>
                     <div>
-                        <h3 class="font-bold text-blue-800 text-sm">Professional Use Only</h3>
-                        <p class="text-xs text-blue-700 mt-1">
-                            Strictly for business owners using WhatsApp Business or Telegram. Not for personal use.
+                        <h3 class="font-bold text-sm">Professional Verification</h3>
+                        <p class="text-[11px] opacity-90 leading-relaxed mt-1">
+                            This directory is exclusively for business owners. Personal or non-commercial numbers are strictly prohibited.
                         </p>
                     </div>
                 </div>
             </div>
 
-            <!-- Registration Form Container -->
+            <!-- Form Container -->
             <div id="form-container" class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
                 <h2 class="text-lg font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="plus-circle" class="text-green-600"></i> Join the All-State List
+                    <i data-lucide="user-plus" class="text-green-600"></i> Register Business
                 </h2>
               
-                <!-- Hidden Iframe for silent submission -->
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;"></iframe>
+                <!-- Target for Google Form -->
+                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){handleSuccess();}"></iframe>
                 
                 <form id="registration-form" class="space-y-4" 
                       action="https://docs.google.com/forms/d/e/1FAIpQLSc1Yz0jF5wANDrrZe_DgU5yMx6cWX_2BgzI8gNUHQUTe4XQCQ/formResponse" 
                       method="POST" 
-                      target="hidden_iframe">
+                      target="hidden_iframe"
+                      onsubmit="submitted=true;">
                             
+                    <!-- Business Name -->
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Business/Brand Name</label>
-                        <input required type="text" name="entry.403300635" id="business-name" placeholder="e.g. Kola's Kitchen" 
-                            class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:bg-white outline-none transition-all">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Business Name</label>
+                        <input required type="text" name="entry.403300635" id="business-name" placeholder="e.g. Trendy Wears" 
+                            class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:bg-white outline-none transition-all">
                     </div>
 
+                    <!-- WhatsApp Number -->
                     <div>
-                        <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">WhatsApp Number</label>
-                        <input required type="tel" name="entry.1493637334" id="whatsapp-number" placeholder="e.g. 08012345678" 
-                            class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:bg-white outline-none transition-all">
+                        <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">WhatsApp Number</label>
+                        <input required type="tel" name="entry.1493637334" id="whatsapp-number" placeholder="e.g. 08123456789" 
+                            class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl focus:ring-2 focus:ring-green-500 focus:bg-white outline-none transition-all">
                     </div>
 
-                    <div class="grid grid-cols-2 gap-4">
+                    <!-- Row: Category & State -->
+                    <div class="grid grid-cols-2 gap-3">
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">Category</label>
-                            <select required name="entry.50410248" id="category-select" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-green-500">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Category</label>
+                            <select required name="entry.50410248" id="category-select" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-green-500">
                                 <option value="">Select...</option>
                             </select>
                         </div>
                         <div>
-                            <label class="block text-[10px] font-bold text-gray-500 uppercase tracking-wider mb-1">State</label>
-                            <select required name="entry.1635387367" id="state-select" class="w-full p-3 bg-gray-50 border border-gray-200 rounded-xl text-sm outline-none focus:ring-2 focus:ring-green-500">
+                            <label class="block text-[10px] font-bold text-gray-400 uppercase tracking-widest mb-1">Your State</label>
+                            <select required name="entry.1635387367" id="state-select" class="w-full p-4 bg-gray-50 border border-gray-200 rounded-xl text-xs outline-none focus:ring-2 focus:ring-green-500">
                                 <option value="">Select...</option>
                             </select>
                         </div>
                     </div>
 
-                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100">
-                        <div class="flex items-start gap-3">
-                            <input type="checkbox" id="consent-checkbox" class="mt-1 w-4 h-4 rounded text-green-600 border-gray-300 focus:ring-green-500">
-                            <label for="consent-checkbox" class="text-[11px] leading-relaxed text-gray-500">
-                                I agree to the public directory terms. I understand my data is provided voluntarily for <strong>commercial networking</strong>. I am responsible for my own safety against spam.
-                            </label>
-                        </div>
+                    <!-- Consent -->
+                    <div class="bg-gray-50 p-4 rounded-xl border border-gray-100 flex items-start gap-3">
+                        <input type="checkbox" id="consent-checkbox" required class="mt-1 w-4 h-4 rounded text-green-600 border-gray-300">
+                        <label for="consent-checkbox" class="text-[10px] leading-tight text-gray-500">
+                            I authorize NaijaPro Gain to include my business number in the public networking list. I understand this data is shared with other verified vendors.
+                        </label>
                     </div>
 
-                    <button type="submit" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 transition shadow-lg active:scale-[0.98]">
+                    <button type="submit" id="submit-btn" class="w-full bg-green-600 text-white font-bold py-4 rounded-xl hover:bg-green-700 shadow-lg active:scale-95 transition-all">
                         SUBMIT TO ALL-STATE LIST
                     </button>
                 </form>
             </div>
 
-            <!-- Success State -->
-            <div id="success-container" class="hidden bg-white rounded-2xl shadow-md p-8 text-center border-2 border-green-100">
-                <div class="w-20 h-20 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <i data-lucide="check-circle-2" class="w-10 h-10 text-green-600"></i>
+            <!-- Success Screen -->
+            <div id="success-container" class="hidden bg-white rounded-2xl shadow-lg p-8 text-center border-2 border-green-50">
+                <div class="bg-green-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-6">
+                    <i data-lucide="check" class="text-green-600 w-10 h-10"></i>
                 </div>
-                <h2 class="text-xl font-bold text-gray-800">Application Received!</h2>
-                <p class="text-sm text-gray-600 mt-2" id="success-message"></p>
-                <button onclick="resetForm()" class="mt-6 text-green-600 font-bold text-sm bg-green-50 px-6 py-2 rounded-full hover:bg-green-100 transition-colors">
-                    Register another business
+                <h2 class="text-xl font-bold text-gray-800">Registration Complete</h2>
+                <p class="text-sm text-gray-600 mt-3" id="success-message"></p>
+                <button onclick="resetForm()" class="mt-8 text-green-600 font-bold text-sm border-2 border-green-100 px-8 py-3 rounded-full hover:bg-green-50 transition-all">
+                    Register Another Brand
                 </button>
-            </div>
-
-            <!-- State-Specific Section -->
-            <div class="bg-white rounded-2xl shadow-sm p-6 border border-gray-100">
-                <h2 class="font-bold mb-4 flex items-center gap-2">
-                    <i data-lucide="map-pin" class="text-orange-500"></i> Specific State Gains
-                </h2>
-                <p class="text-xs text-gray-500 mb-4">Tap a state to get a customized networking link for that region.</p>
-                <div class="grid grid-cols-2 gap-3" id="state-buttons">
-                    <!-- Buttons generated by JS -->
-                </div>
             </div>
         </section>
 
         <!-- DOWNLOAD TAB -->
         <section id="tab-download" class="tab-content space-y-4">
-            <h2 class="text-xl font-bold px-1">Available Lists</h2>
-            <p class="text-sm text-gray-600 px-1">Compiled VCF files for easy contact importing.</p>
-            
-            <div id="download-lists" class="space-y-3">
-                <!-- Lists generated by JS -->
-            </div>
+            <h2 class="text-xl font-bold px-1">Network Lists</h2>
+            <p class="text-sm text-gray-500 px-1">Download verified contacts directly to your phone.</p>
+            <div id="download-lists" class="space-y-3"></div>
         </section>
 
         <!-- SAFETY TAB -->
         <section id="tab-safety" class="tab-content space-y-4">
-            <div class="bg-red-50 border-l-4 border-red-500 p-4 rounded-r-xl">
+            <div class="bg-red-50 border-l-4 border-red-600 p-4 rounded-r-xl">
                 <h2 class="text-red-800 font-bold flex items-center gap-2">
-                    <i data-lucide="alert-triangle"></i> Privacy & Safety Hub
+                    <i data-lucide="shield-alert"></i> Safety & Privacy
                 </h2>
             </div>
-            
-            <div class="bg-white p-6 rounded-2xl shadow-sm space-y-6 text-sm leading-relaxed border border-gray-100">
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                        <i data-lucide="lock" class="text-green-600 w-5 h-5"></i> Preventing Scams
-                    </h3>
-                    <ul class="space-y-3 text-gray-600">
-                        <li class="flex gap-2">
-                            <span class="text-green-500 font-bold">•</span>
-                            <span>Enable <strong>Two-Step Verification</strong> on your WhatsApp immediately.</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <span class="text-green-500 font-bold">•</span>
-                            <span>Never share your 6-digit WhatsApp registration code with anyone.</span>
-                        </li>
-                        <li class="flex gap-2">
-                            <span class="text-green-500 font-bold">•</span>
-                            <span>Be wary of "Investment" or "Grant" schemes that ask for money upfront.</span>
-                        </li>
-                    </ul>
-                </div>
-
-                <hr class="border-gray-100">
-
-                <div class="space-y-3">
-                    <h3 class="font-bold text-gray-800 flex items-center gap-2">
-                        <i data-lucide="info" class="text-blue-600 w-5 h-5"></i> Data Ethics
-                    </h3>
-                    <p class="text-gray-500 text-xs">
-                        By submitting, you provide <strong>explicit consent</strong> for your number to be shared for networking. We do not scrape data. All entries are user-submitted.
-                    </p>
-                </div>
-
-                <div class="bg-gray-50 p-4 rounded-xl text-[11px] text-gray-500 italic">
-                    Admin Tip: Use the "Archive" feature in WhatsApp for unknown numbers to keep your main chat list clean while networking.
+            <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 space-y-4">
+                <p class="text-sm text-gray-600"><strong>Note:</strong> We do not verify individual user identities. Always use caution when conducting transactions.</p>
+                <div class="bg-gray-50 p-4 rounded-xl text-xs text-gray-500">
+                    If you wish to remove your number, please email support with your registered business name and phone number.
                 </div>
             </div>
         </section>
     </main>
 
-    <!-- Navigation -->
-    <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-md border-t border-gray-200 flex justify-around items-center px-4 h-20 z-40 pb-4">
-        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center p-2 flex-1 transition-all" data-tab="home">
-            <i data-lucide="plus-square" class="w-6 h-6"></i>
+    <!-- Bottom Nav -->
+    <nav class="fixed bottom-0 left-0 right-0 bg-white/90 backdrop-blur-lg border-t border-gray-100 flex justify-around items-center h-20 px-4 z-40 pb-2">
+        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center p-2 flex-1" data-tab="home">
+            <i data-lucide="plus-circle" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Register</span>
         </button>
-        <button onclick="switchTab('download')" class="nav-item flex flex-col items-center p-2 flex-1 transition-all" data-tab="download">
-            <i data-lucide="download-cloud" class="w-6 h-6"></i>
-            <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Download</span>
+        <button onclick="switchTab('download')" class="nav-item flex flex-col items-center p-2 flex-1" data-tab="download">
+            <i data-lucide="download" class="w-6 h-6"></i>
+            <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Files</span>
         </button>
-        <button onclick="switchTab('safety')" class="nav-item flex flex-col items-center p-2 flex-1 transition-all" data-tab="safety">
-            <i data-lucide="shield-check" class="w-6 h-6"></i>
+        <button onclick="switchTab('safety')" class="nav-item flex flex-col items-center p-2 flex-1" data-tab="safety">
+            <i data-lucide="shield" class="w-6 h-6"></i>
             <span class="text-[10px] font-bold mt-1 uppercase tracking-tighter">Safety</span>
         </button>
     </nav>
 
     <script>
-        // Data Initialization
+        let submitted = false;
+        
         const categories = ["Fashion & Lifestyle", "Tech & Software", "Real Estate", "Food & Groceries", "Health & Wellness", "Education", "Digital Marketing", "Handmade/Artisan", "Consultancy", "Others"];
-        const states = ["All States", "Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"];
-        const downloads = [
-            { title: "All-State Mega List", count: "1,200+ Vendors", date: "Today" },
-            { title: "Tech & Digital Services", count: "450 Professionals", date: "Yesterday" },
-            { title: "Lagos Business Hub", count: "800 Vendors", date: "2 days ago" }
-        ];
+        const states = ["Abia", "Adamawa", "Akwa Ibom", "Anambra", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Delta", "Ebonyi", "Edo", "Ekiti", "Enugu", "FCT", "Gombe", "Imo", "Jigawa", "Kaduna", "Kano", "Katsina", "Kebbi", "Kogi", "Kwara", "Lagos", "Nasarawa", "Niger", "Ogun", "Ondo", "Osun", "Oyo", "Plateau", "Rivers", "Sokoto", "Taraba", "Yobe", "Zamfara"];
+        
+        // Setup Form
+        const catSelect = document.getElementById('category-select');
+        categories.forEach(c => catSelect.add(new Option(c, c)));
 
-        // Populate Selects
-        const categorySelect = document.getElementById('category-select');
-        categories.forEach(c => {
-            const opt = document.createElement('option');
-            opt.value = c;
-            opt.textContent = c;
-            categorySelect.appendChild(opt);
-        });
+        const stSelect = document.getElementById('state-select');
+        states.forEach(s => stSelect.add(new Option(s, s)));
 
-        const stateSelect = document.getElementById('state-select');
-        states.forEach(s => {
-            const opt = document.createElement('option');
-            opt.value = s;
-            opt.textContent = s;
-            stateSelect.appendChild(opt);
-        });
-
-        // Populate State Buttons
-        const stateButtons = document.getElementById('state-buttons');
-        ["Lagos", "Abuja", "Rivers", "Oyo", "Kano", "Edo"].forEach(state => {
-            const btn = document.createElement('button');
-            btn.className = "p-3 bg-white border border-gray-100 rounded-xl text-xs font-semibold hover:border-green-300 hover:bg-green-50 transition-all text-left flex justify-between items-center shadow-sm";
-            btn.innerHTML = `<span>${state}</span> <span class="text-[10px] text-green-600 bg-green-100 px-1.5 py-0.5 rounded">Join →</span>`;
-            btn.onclick = () => showAlert(`Custom link for ${state}: naijaprogain.com/state/${state.toLowerCase()}`);
-            stateButtons.appendChild(btn);
-        });
-
-        // Populate Downloads
-        const downloadLists = document.getElementById('download-lists');
-        downloads.forEach(list => {
-            downloadLists.innerHTML += `
-                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center group active:bg-gray-50 transition-colors">
+        // Setup Downloads
+        const dlLists = document.getElementById('download-lists');
+        [
+            { title: "Mega All-State List", desc: "1,500+ Active Vendors" },
+            { title: "Lagos/West Premium", desc: "900+ Verified Brands" },
+            { title: "Abuja/North Hub", desc: "600+ Verified Brands" }
+        ].forEach(item => {
+            dlLists.innerHTML += `
+                <div class="bg-white p-4 rounded-2xl shadow-sm border border-gray-50 flex justify-between items-center active:bg-gray-50 transition-colors">
                     <div>
-                        <h3 class="font-bold text-sm text-gray-800">${list.title}</h3>
-                        <div class="flex gap-2 text-[10px] text-gray-400 mt-0.5">
-                            <span>${list.count}</span> • <span>${list.date}</span>
-                        </div>
+                        <h4 class="font-bold text-sm">${item.title}</h4>
+                        <p class="text-[10px] text-gray-400 font-medium uppercase">${item.desc}</p>
                     </div>
-                    <button class="bg-green-50 text-green-700 p-2.5 rounded-xl group-hover:bg-green-600 group-hover:text-white transition-all">
-                        <i data-lucide="download" class="w-5 h-5"></i>
-                    </button>
+                    <button class="bg-green-50 text-green-700 p-3 rounded-xl"><i data-lucide="download" class="w-5 h-5"></i></button>
                 </div>
             `;
         });
 
-        // Logic Functions
-        function switchTab(tabId) {
-            document.querySelectorAll('.tab-content').forEach(el => el.classList.remove('active'));
-            document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-            
-            document.getElementById(`tab-${tabId}`).classList.add('active');
-            document.querySelector(`[data-tab="${tabId}"]`).classList.add('active');
+        function switchTab(id) {
+            document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById(`tab-${id}`).classList.add('active');
+            document.querySelector(`[data-tab="${id}"]`).classList.add('active');
             window.scrollTo({top: 0, behavior: 'smooth'});
         }
 
-        function showAlert(msg) {
-            document.getElementById('alert-message').innerText = msg;
+        function showAlert(m) {
+            document.getElementById('alert-message').innerText = m;
             document.getElementById('custom-alert').style.display = 'flex';
         }
 
@@ -465,34 +214,23 @@
             document.getElementById('custom-alert').style.display = 'none';
         }
 
-        document.getElementById('registration-form').onsubmit = function(e) {
-            const consent = document.getElementById('consent-checkbox').checked;
-            if (!consent) {
-                e.preventDefault();
-                showAlert("Please accept the terms to proceed.");
-                return;
-            }
-            
-            const name = document.getElementById('business-name').value;
-            // The form will submit to the hidden iframe
-            setTimeout(() => {
-                document.getElementById('form-container').classList.add('hidden');
-                document.getElementById('success-container').classList.remove('hidden');
-                document.getElementById('success-message').innerText = `Your business "${name}" has been added to the directory queue. Check back in 24 hours for the updated list.`;
-            }, 500);
-        };
+        function handleSuccess() {
+            const biz = document.getElementById('business-name').value;
+            document.getElementById('form-container').classList.add('hidden');
+            document.getElementById('success-container').classList.remove('hidden');
+            document.getElementById('success-message').innerText = `Your brand "${biz}" has been successfully added to our queue. It will appear on the next list update.`;
+        }
 
         function resetForm() {
+            submitted = false;
             document.getElementById('registration-form').reset();
             document.getElementById('form-container').classList.remove('hidden');
             document.getElementById('success-container').classList.add('hidden');
         }
 
-        // Initialize Lucide Icons
-        window.addEventListener('load', () => {
-            lucide.createIcons();
-        });
+        lucide.createIcons();
     </script>
 </body>
 </html>
 
+    
