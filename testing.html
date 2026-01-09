@@ -204,7 +204,7 @@
                     </div>
                     <div class="text-right">
                         <p class="text-[10px] font-bold text-slate-400 uppercase">Last Update</p>
-                        <p id="update-date" class="text-xs font-bold text-emerald-600">Jan 24, 2024</p>
+                        <p id="update-date" class="text-xs font-bold text-emerald-600">Jan 9, 2026</p>
                     </div>
                 </div>
                 
@@ -218,7 +218,7 @@
                         <i data-lucide="info" class="text-blue-600 shrink-0"></i>
                         <p class="text-xs text-blue-800/80 leading-relaxed">
                             A new batch of vendors is added every 24-48 hours. 
-                            <a href="https://whatsapp.com/channel/example" target="_blank" class="text-blue-700 font-bold underline">Join our Official WhatsApp Channel</a> 
+                            <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="text-blue-700 font-bold underline">Join our Official WhatsApp Channel</a> 
                             for the latest version without re-registering.
                         </p>
                     </div>
@@ -263,11 +263,11 @@
     <script>
         // CONFIGURABLE DATA
         const CONFIG = {
-            updateDate: "Updated Today, 10:45 AM",
+            updateDate: "Updated Today, 9:00 PM",
             shareTarget: 3, // Number of times they need to click share
             shareText: "Hey! Join the NaijaPro networking platform to grow your business contacts for free. Register here: " + window.location.href,
             vcfData: [
-                { id: 1, count: 850, status: "Ongoing" },
+                { id: 1, count: 80, status: "Ongoing" },
                 { id: 2, count: 0, status: "Not yet activated" },
                 { id: 3, count: 0, status: "Not yet activated" },
                 { id: 4, count: 0, status: "Not yet activated" },
@@ -331,7 +331,7 @@
                         </div>
 
                         ${isUnlocked ? 
-                            `<a href="contacts_${vcf.id}.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
+                            `<a href="contacts${vcf.id}.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
                                class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
                                <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
                             </a>` :
@@ -359,7 +359,7 @@
             if(count >= CONFIG.shareTarget) {
                 showAlert('Task Completed!', 'Thank you for supporting the platform. All VCF files are now unlocked for download.', 'check-circle');
             } else {
-                showAlert('Sharing...', `You have shared ${count}/${CONFIG.shareTarget} times. Share to your WhatsApp Status to fully unlock the files.`, 'share-2');
+                showAlert('Sharing...', `You have shared ${count}/${CONFIG.shareTarget} times. Share to your WhatsApp Status / Groups/ Friends to fully unlock the files.`, 'share-2');
             }
             renderVcfFiles();
         }
