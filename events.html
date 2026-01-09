@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Event Countdown</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;900&display=swap');
+        body { font-family: 'Outfit', sans-serif; background: #050505; }
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+        .btn-gradient {
+            background: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
+            transition: all 0.3s ease;
+        }
+        .btn-gradient:hover {
+            filter: brightness(1.1);
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -5px rgba(99, 102, 241, 0.5);
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-6 text-white">
+
+    <div class="max-w-sm w-full glass-card rounded-[2.5rem] p-8 text-center">
+        <!-- Live Status -->
+        <div class="inline-flex items-center gap-2 px-4 py-1.5 bg-white/5 rounded-full mb-6 border border-white/10">
+            <span class="flex h-2 w-2">
+                <span class="animate-ping absolute inline-flex h-2 w-2 rounded-full bg-indigo-400 opacity-75"></span>
+                <span class="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
+            </span>
+            <span class="text-[10px] font-bold uppercase tracking-[0.2em] text-indigo-300">Live @ 4:45 PM</span>
+        </div>
+
+        <h1 class="text-3xl font-black mb-2 tracking-tight">Grand Finale</h1>
+        <p class="text-gray-400 text-sm mb-10">Don't miss a second of the closing session.</p>
+
+        <!-- Dynamic Countdown -->
+        <div class="flex justify-center gap-6 mb-10">
+            <div>
+                <span id="min-display" class="text-5xl font-black tabular-nums">00</span>
+                <p class="text-[10px] text-gray-500 uppercase font-bold mt-1">Min</p>
+            </div>
+            <span class="text-5xl font-black text-white/20">:</span>
+            <div>
+                <span id="sec-display" class="text-5xl font-black tabular-nums">00</span>
+                <p class="text-[10px] text-gray-500 uppercase font-bold mt-1">Sec</p>
+            </div>
+        </div>
+
+        <!-- The Smart Button -->
+        <button onclick="triggerSmartReminder()" class="w-full btn-gradient py-5 rounded-2xl font-bold text-lg flex flex-col items-center justify-center shadow-lg active:scale-95">
+            <span>Set My Alarm</span>
+            <span id="device-label" class="text-[10px] opacity-70 font-medium mt-0.5 tracking-wide">Syncing to your device...</span>
+        </button>
+
+        <p class="mt-6 text-[11px] text-gray-500 leading-relaxed">
+            Automatically detects if you're using <span class="text-gray-300">iPhone</span> or <span class="text-gray-300">Android</span>. <br>Tap <b>"Add"</b> or <b>"Save"</b> on the next screen.
+        </p>
+    </div>
+
+    <!-- Instructions Modal -->
+    <div id="info-modal" class="hidden fixed inset-0 bg-black/95 z-50 flex items-center justify-center p-8">
+        <div class="max-w-xs text-center">
+            <div class="w-20 h-20 bg-indigo-500/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 text-indigo-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                </svg>
+            </div>
+            <h2 class="text-2xl font-bold mb-3">One Last Tap</h2>
+            <p id="modal-text" class="text-gray-400 text-sm mb-8 leading-relaxed">Your app is opening. To confirm the alarm, you must tap <span class="text-white font-bold uppercase">Save</span> at the top of your screen.</p>
+            <button onclick="closeModal()" class="w-full py-4 bg-white/10 rounded-xl font-bold hover:bg-white/20 transition-all">I understand</button>
+        </div>
+    </div>
+
+    <script>
+        // TARGET CONFIGURATION
+        const TARGET_HOUR = 16; // 4 PM
+        const TARGET_MIN = 45; // 45 MIN
+        const EVENT_TITLE = "🔔 LIVE NOW: Grand Finale";
+        const EVENT_DESC = "The session is starting at 4:45 PM. Open the portal!";
+
+        // Platform Detection Logic
+        const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+        // Update Button Label on Load
+        window.onload = () => {
+            const label = document.getElementById('device-label');
+            label.innerText = isIOS ? "Optimized for iPhone / iOS" : "Optimized for Android / Google";
+        };
+
+        // 1. DYNAMIC COUNTDOWN
+        function updateCountdown() {
+            const now = new Date();
+            const target = new Date();
+            target.setHours(TARGET_HOUR, TARGET_MIN, 0, 0);
+
+            const diff = target - now;
+
+            if (diff <= 0) {
+                document.getElementById('min-display').innerText = "00";
+                document.getElementById('sec-display').innerText = "00";
+                return;
+            }
+
+            const m = Math.floor(diff / 1000 / 60);
+            const s = Math.floor((diff / 1000) % 60);
+
+            document.getElementById('min-display').innerText = m.toString().padStart(2, '0');
+            document.getElementById('sec-display').innerText = s.toString().padStart(2, '0');
+        }
+        setInterval(updateCountdown, 1000);
+        updateCountdown();
+
+        // 2. SMART REMINDER LOGIC
+        function triggerSmartReminder() {
+            const target = new Date();
+            target.setHours(TARGET_HOUR, TARGET_MIN, 0, 0);
+
+            const format = (d) => d.toISOString().replace(/[-:]/g, '').split('.')[0] + "Z";
+            const startStr = format(target);
+            const endStr = format(new Date(target.getTime() + 60 * 60000)); // 1hr duration
+
+            if (isIOS) {
+                // iCal logic for iPhone
+                const icsBody = [
+                    "BEGIN:VCALENDAR",
+                    "VERSION:2.0",
+                    "BEGIN:VEVENT",
+                    `DTSTART:${startStr}`,
+                    `DTEND:${endStr}`,
+                    `SUMMARY:${EVENT_TITLE}`,
+                    `DESCRIPTION:${EVENT_DESC}`,
+                    "BEGIN:VALARM",
+                    "TRIGGER:-PT0M",
+                    "ACTION:DISPLAY",
+                    "DESCRIPTION:Reminder",
+                    "END:VALARM",
+                    "END:VEVENT",
+                    "END:VCALENDAR"
+                ].join("\n");
+
+                const blob = new Blob([icsBody], { type: 'text/calendar;charset=utf-8' });
+                const link = document.createElement('a');
+                link.href = window.URL.createObjectURL(blob);
+                link.setAttribute('download', 'event.ics');
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            } else {
+                // Google Calendar logic for Android
+                const gUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(EVENT_TITLE)}&details=${encodeURIComponent(EVENT_DESC)}&dates=${startStr}/${endStr}`;
+                window.open(gUrl, '_blank');
+            }
+
+            // Show Modal Instructions
+            document.getElementById('modal-text').innerHTML = isIOS 
+                ? 'Your iPhone is downloading the event. Tap <span class="text-indigo-400 font-bold">ADD</span> in the top right to set the alarm.'
+                : 'Google Calendar is opening. Tap <span class="text-indigo-400 font-bold">SAVE</span> at the top to set the alarm.';
+            document.getElementById('info-modal').classList.remove('hidden');
+        }
+
+        function closeModal() {
+            document.getElementById('info-modal').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>
+
