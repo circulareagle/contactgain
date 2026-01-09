@@ -13,6 +13,8 @@
         :root {
             --primary: #059669;
             --primary-dark: #064e3b;
+            --vcf-red: #ef4444;
+            --vcf-grey: #94a3b8;
         }
 
         body { 
@@ -38,6 +40,31 @@
         }
         
         #custom-alert { display: none; }
+
+        /* Pipeline Styles */
+        .pipeline-container {
+            width: 100%;
+            height: 12px;
+            background: #e2e8f0;
+            border-radius: 999px;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #cbd5e1;
+        }
+        .pipeline-fill {
+            height: 100%;
+            transition: width 0.8s ease-in-out;
+            background: repeating-linear-gradient(
+                45deg,
+                var(--vcf-red),
+                var(--vcf-red) 10px,
+                #dc2626 10px,
+                #dc2626 20px
+            );
+        }
+        .pipeline-empty {
+            background: #cbd5e1 !important;
+        }
     </style>
 </head>
 <body class="text-slate-900 pb-28">
@@ -52,231 +79,165 @@
                 </h1>
                 <p class="text-[10px] font-bold text-emerald-600/60 uppercase tracking-widest mt-1">Commercial Networking Only</p>
             </div>
-            <div class="flex gap-2">
-                <span class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                <span class="text-[10px] font-bold text-slate-400 uppercase">Live Directory</span>
-            </div>
+            <div id="user-status" class="flex gap-2 items-center"></div>
         </div>
     </header>
 
     <!-- Alert Modal -->
     <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
-            <div id="alert-icon" class="mb-4"></div>
-            <h3 id="alert-title" class="text-xl font-bold text-slate-900 mb-2">Notice</h3>
-            <p id="alert-message" class="text-sm text-slate-600 mb-8 leading-relaxed"></p>
-            <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-200">Understand & Close</button>
+            <div id="alert-icon" class="mb-4 text-center"></div>
+            <h3 id="alert-title" class="text-xl font-bold text-slate-900 mb-2 text-center">Notice</h3>
+            <p id="alert-message" class="text-sm text-slate-600 mb-8 leading-relaxed text-center"></p>
+            <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-200">Got it!</button>
         </div>
     </div>
 
     <main class="max-w-md mx-auto p-5">
         
-        <!-- REGISTER TAB (Homepage) -->
+        <!-- REGISTRATION SECTION -->
         <section id="tab-home" class="tab-content active space-y-6">
-            <!-- Professional Disclaimer -->
-            <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-3xl">
-                <div class="flex gap-4">
-                    <div class="bg-white p-2 h-fit rounded-xl shadow-sm">
-                        <i data-lucide="shield-check" class="text-emerald-600 w-5 h-5"></i>
-                    </div>
-                    <div>
-                        <h3 class="font-bold text-emerald-900 text-sm">Professional Directory Policy</h3>
-                        <p class="text-xs text-emerald-800/70 leading-relaxed mt-1">
-                            This platform is strictly for <strong>WhatsApp</strong> and <strong>Telegram</strong> users. Register to access the network.
-                        </p>
+            <div id="member-view" class="hidden space-y-6">
+                <div class="bg-emerald-600 rounded-3xl p-8 text-white shadow-xl">
+                    <h2 class="text-2xl font-bold">Welcome Back!</h2>
+                    <p class="text-sm opacity-90 mt-2">You are a verified member. Access your 10 VCF files below.</p>
+                    <div class="mt-6">
+                         <button onclick="switchTab('download')" class="w-full bg-white text-emerald-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+                            <i data-lucide="file-down" class="w-5 h-5"></i> Go to VCF Files
+                        </button>
                     </div>
                 </div>
             </div>
 
-            <!-- Main Form -->
-            <div id="form-container" class="bg-white rounded-3xl shadow-sm p-6 border border-slate-100">
-                <div class="mb-6">
-                    <h2 class="text-xl font-bold text-slate-800">Active Contacts for Your Business</h2>
-                    <p class="text-xs text-slate-400 mt-1">Join 5,000+ Nigerian entrepreneurs.</p>
+            <div id="guest-view" class="space-y-6">
+                <div class="bg-emerald-50 border border-emerald-100 p-5 rounded-3xl">
+                    <div class="flex gap-4">
+                        <div class="bg-white p-2 h-fit rounded-xl shadow-sm">
+                            <i data-lucide="lock" class="text-emerald-600 w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <h3 class="font-bold text-emerald-900 text-sm">Restricted Access</h3>
+                            <p class="text-xs text-emerald-800/70 leading-relaxed mt-1">
+                                Join the directory to unlock the 10-batch VCF networking files.
+                            </p>
+                        </div>
+                    </div>
                 </div>
-              
-                <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){handleSuccess();}"></iframe>
-                
-                <form id="registration-form" class="space-y-5" 
-                      action="https://docs.google.com/forms/d/e/1FAIpQLSc1Yz0jF5wANDrrZe_DgU5yMx6cWX_2BgzI8gNUHQUTe4XQCQ/formResponse" 
-                      method="POST" 
-                      target="hidden_iframe"
-                      onsubmit="submitted=true;">
-                            
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Business/Brand Name</label>
-                        <input required type="text" name="entry.403300635" id="business-name" placeholder="e.g. Lagos Tech Hub" 
-                            class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
-                    </div>
 
-                    <div>
-                        <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">WhatsApp Business Number</label>
-                        <input required type="tel" name="entry.1493637334" id="whatsapp-number" placeholder="0801 234 5678" 
-                            class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
+                <div id="form-container" class="bg-white rounded-3xl shadow-sm p-6 border border-slate-100">
+                    <div class="mb-6">
+                        <h2 class="text-xl font-bold text-slate-800">Register Your Business</h2>
+                        <p class="text-xs text-slate-400 mt-1">Join thousands of Nigerian professionals.</p>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-4">
+                  
+                    <iframe name="hidden_iframe" id="hidden_iframe" style="display:none;" onload="if(submitted){handleSuccess();}"></iframe>
+                    
+                    <form id="registration-form" class="space-y-5" 
+                          action="https://docs.google.com/forms/d/e/1FAIpQLSc1Yz0jF5wANDrrZe_DgU5yMx6cWX_2BgzI8gNUHQUTe4XQCQ/formResponse" 
+                          method="POST" 
+                          target="hidden_iframe"
+                          onsubmit="submitted=true;">
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Category</label>
-                            <select required name="entry.50410248" id="category-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
-                                <option value="">Select Industry</option>
-                            </select>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Business/Brand Name</label>
+                            <input required type="text" name="entry.403300635" placeholder="e.g. Lagos Tech Hub" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
                         </div>
                         <div>
-                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Location</label>
-                            <select required name="entry.1635387367" id="state-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
-                                <option value="">Select State</option>
-                            </select>
+                            <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">WhatsApp Business Number</label>
+                            <input required type="tel" name="entry.1493637334" placeholder="0801 234 5678" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
                         </div>
-                    </div>
-
-                    <div class="bg-slate-50 p-5 rounded-2xl border border-slate-100">
-                        <div class="flex gap-3">
-                            <input type="checkbox" id="consent-checkbox" required class="mt-1 w-5 h-5 rounded-lg text-emerald-600 border-slate-300 focus:ring-emerald-500">
-                            <label for="consent-checkbox" class="text-[10px] leading-normal text-slate-500">
-                                I agree to the professional networking terms. I acknowledge my data is provided voluntarily for commercial purpose.
-                            </label>
+                        <div class="grid grid-cols-2 gap-4">
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Category</label>
+                                <select required name="entry.50410248" id="category-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
+                                    <option value="">Select Industry</option>
+                                </select>
+                            </div>
+                            <div>
+                                <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Location</label>
+                                <select required name="entry.1635387367" id="state-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
+                                    <option value="">Select State</option>
+                                </select>
+                            </div>
                         </div>
-                    </div>
-
-                    <button type="submit" id="submit-btn" class="w-full bg-emerald-600 text-white font-bold py-5 rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm uppercase">
-                        JOIN & UNLOCK VCF FILES
-                    </button>
-                </form>
+                        <button type="submit" class="w-full bg-emerald-600 text-white font-bold py-5 rounded-2xl hover:bg-emerald-700 shadow-xl shadow-emerald-100 active:scale-[0.98] transition-all flex items-center justify-center gap-2 text-sm uppercase">
+                            JOIN & UNLOCK FILES
+                        </button>
+                    </form>
+                </div>
             </div>
 
-            <!-- Enhanced Success Screen -->
             <div id="success-container" class="hidden space-y-6">
                 <div class="bg-white rounded-3xl shadow-xl p-8 text-center border border-emerald-50">
                     <div class="bg-emerald-100 w-20 h-20 rounded-full flex items-center justify-center mx-auto mb-4">
-                        <i data-lucide="unlock" class="text-emerald-600 w-10 h-10"></i>
+                        <i data-lucide="party-popper" class="text-emerald-600 w-10 h-10"></i>
                     </div>
-                    <h2 class="text-2xl font-800 text-slate-800">Files Unlocked!</h2>
-                    <p class="text-sm text-slate-500 mt-2 leading-relaxed" id="success-message"></p>
-                    
-                    <div class="mt-8 flex flex-col gap-3">
+                    <h2 class="text-2xl font-800 text-slate-800">Registration Complete!</h2>
+                    <p class="text-sm text-slate-500 mt-2 leading-relaxed">Access the VCF files and complete the share task to download.</p>
+                    <div class="mt-8">
                         <button onclick="switchTab('download')" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-100 flex items-center justify-center gap-2">
-                            <i data-lucide="download-cloud" class="w-5 h-5"></i> Access VCF Files Now
+                            <i data-lucide="download-cloud" class="w-5 h-5"></i> Access VCF Files
                         </button>
-                        <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="w-full bg-slate-50 text-slate-700 font-bold py-4 rounded-2xl border border-slate-200 flex items-center justify-center gap-2">
-                            <i data-lucide="bell" class="w-5 h-5 text-emerald-600"></i> Join WhatsApp Channel
-                        </a>
                     </div>
                 </div>
-
-                <div class="bg-gradient-to-br from-slate-800 to-slate-900 p-6 rounded-3xl text-white shadow-xl">
-                    <div class="flex items-center gap-2 mb-3">
-                        <span class="bg-emerald-500 text-[10px] font-bold px-2 py-1 rounded-md uppercase tracking-wider">Business Tip</span>
-                    </div>
-                    <p class="text-sm leading-relaxed opacity-90 italic">
-                        "Your profile photo should be your logo or your face. Professionals deal with people they can see and trust."
-                    </p>
-                </div>
-
-                <button onclick="resetForm()" class="w-full text-slate-400 font-bold text-xs uppercase tracking-widest py-4 hover:text-emerald-600 transition-colors">
-                    Register Another Business
-                </button>
             </div>
         </section>
 
         <!-- DOWNLOADS TAB -->
         <section id="tab-download" class="tab-content space-y-5">
-            <div class="px-2">
-                <div class="flex items-center gap-2 text-emerald-600 mb-1">
-                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                    <span class="text-[10px] font-bold uppercase tracking-widest">Verified Access</span>
+            <div id="download-locked" class="py-12 text-center space-y-4">
+                <div class="bg-slate-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto">
+                    <i data-lucide="lock" class="text-slate-400 w-8 h-8"></i>
                 </div>
-                <h2 class="text-2xl font-800 text-slate-900 tracking-tight">Active Directories</h2>
-                <p class="text-sm text-slate-500">Download and import to your phone to start networking.</p>
+                <h3 class="font-bold text-slate-800">Files Locked</h3>
+                <p class="text-xs text-slate-500 px-10">Please register your business on the Home tab to access these files.</p>
+                <button onclick="switchTab('home')" class="text-emerald-600 font-bold text-sm uppercase tracking-widest">Go to Home</button>
             </div>
-            
-            <div id="download-lists" class="space-y-4">
-                <!-- Single VCF File Item -->
-                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 space-y-6">
-                    <div class="flex justify-between items-start">
-                        <div class="flex gap-4 items-center">
-                            <div class="bg-emerald-50 text-emerald-600 p-4 rounded-2xl">
-                                <i data-lucide="file-text" class="w-6 h-6"></i>
-                            </div>
-                            <div>
-                                <h4 class="font-800 text-lg text-slate-800 tracking-tight">NaijaPro Mega VCF</h4>
-                                <p class="text-xs text-slate-400 font-bold uppercase tracking-wider">1,850 Vendors • All States</p>
-                            </div>
+
+            <div id="download-unlocked" class="hidden space-y-5">
+                <div class="px-2 flex justify-between items-end">
+                    <div>
+                        <div class="flex items-center gap-2 text-emerald-600 mb-1">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            <span class="text-[10px] font-bold uppercase tracking-widest">Verified Member Access</span>
                         </div>
-                        <span class="bg-emerald-100 text-emerald-700 text-[9px] font-900 px-2 py-1 rounded-full uppercase">MEGA BUNDLE</span>
+                        <h2 class="text-2xl font-800 text-slate-900 tracking-tight">Active Directories</h2>
                     </div>
-
-                    <div class="flex items-center justify-between text-[11px] text-slate-400 font-bold border-t border-slate-50 pt-4">
-                        <div class="flex items-center gap-1.5 text-slate-500">
-                            <i data-lucide="clock" class="w-3 h-3"></i>
-                            <span>Last Update: <span id="update-timestamp"></span></span>
-                        </div>
-                        <div class="flex items-center gap-1 text-emerald-600">
-                            <i data-lucide="check" class="w-3 h-3"></i>
-                            <span>Verified Safe</span>
-                        </div>
+                    <div class="text-right">
+                        <p class="text-[10px] font-bold text-slate-400 uppercase">Last Update</p>
+                        <p id="update-date" class="text-xs font-bold text-emerald-600">Jan 9, 2026</p>
                     </div>
-                    
-                    <a href="contacts.vcf" 
-   download="contacts.vcf" 
-   class="block w-full bg-slate-900 text-white font-bold py-5 rounded-2xl shadow-xl shadow-slate-200 flex items-center justify-center gap-3 transition-all active:scale-95 no-underline">
-   
-   <i data-lucide="download" class="w-5 h-5 text-emerald-400"></i> 
-   DOWNLOAD MEGA FILE
-</a>
+                </div>
+                
+                <!-- 10 VCF FILE LIST -->
+                <div id="vcf-list" class="space-y-4">
+                    <!-- Cards generated by JS -->
+                </div>
 
-
-
-                    <!-- Utility Link -->
-                    <div class="pt-2">
-                        <a href="https://play.google.com/store/apps/details?id=com.vcf.remover" target="_blank" class="flex items-center justify-center gap-2 p-4 bg-slate-50 rounded-2xl border border-slate-200/50 hover:bg-white transition-all group">
-                            <div class="bg-white p-1.5 rounded-lg border border-slate-200">
-                                <i data-lucide="trash-2" class="w-4 h-4 text-red-500"></i>
-                            </div>
-                            <span class="text-xs font-bold text-slate-600 group-hover:text-emerald-700">Clean Duplicate Contacts Tool</span>
-                            <i data-lucide="external-link" class="w-3 h-3 text-slate-300"></i>
-                        </a>
+                <div class="bg-blue-50 border border-blue-100 p-5 rounded-3xl flex flex-col gap-3">
+                    <div class="flex gap-4">
+                        <i data-lucide="info" class="text-blue-600 shrink-0"></i>
+                        <p class="text-xs text-blue-800/80 leading-relaxed">
+                            A new batch of vendors is added every 24-48 hours. 
+                            <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="text-blue-700 font-bold underline">Join our Official WhatsApp Channel</a> 
+                            for the latest version without re-registering.
+                        </p>
                     </div>
                 </div>
             </div>
-
-            <div class="bg-amber-50 border border-amber-100 p-5 rounded-3xl flex gap-4">
-                <i data-lucide="info" class="text-amber-600 shrink-0"></i>
-                <p class="text-xs text-amber-800/80 leading-relaxed">
-                    A new batch of 100+ vendors is added every 24 hours. Your listing will appear in the next update. Join WhatsApp Channel for more.
-                </p>
-            </div>
-            
-            <button onclick="switchTab('home')" class="w-full py-4 text-slate-400 text-xs font-bold uppercase tracking-widest flex items-center justify-center gap-2">
-                <i data-lucide="arrow-left" class="w-4 h-4"></i> Back to Registration
-            </button>
         </section>
 
-        <!-- SAFETY HUB TAB -->
+        <!-- SAFETY TAB -->
         <section id="tab-safety" class="tab-content space-y-6">
-            <div class="bg-emerald-600 p-6 rounded-3xl text-white shadow-xl shadow-emerald-100">
-                <h2 class="text-xl font-bold flex items-center gap-2">
-                    <i data-lucide="shield"></i> Safety & Ethics
-                </h2>
-                <p class="text-xs opacity-90 mt-2 leading-relaxed font-medium">Professional networking requires professional conduct.</p>
+            <div class="bg-slate-900 p-6 rounded-3xl text-white shadow-xl">
+                <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="shield"></i> Safety & Ethics</h2>
+                <p class="text-xs opacity-90 mt-2">Protect your account and your business.</p>
             </div>
-
-            <div class="space-y-4">
-                <div class="bg-white p-6 rounded-3xl border border-slate-100 shadow-sm space-y-5">
-                    <div class="flex gap-4">
-                        <div class="bg-blue-50 p-2 rounded-xl"><i data-lucide="key" class="text-blue-600 w-5 h-5"></i></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800">2-Step Verification</h4>
-                            <p class="text-xs text-slate-500 mt-1">Never share your WhatsApp 2FA code with anybody.</p>
-                        </div>
-                    </div>
-                    
-                    <div class="flex gap-4">
-                        <div class="bg-red-50 p-2 rounded-xl"><i data-lucide="alert-triangle" class="text-red-600 w-5 h-5"></i></div>
-                        <div>
-                            <h4 class="text-sm font-bold text-slate-800">No Codes or Payments</h4>
-                            <p class="text-xs text-slate-500 mt-1">NaijaPro Gain will never call you to ask for a code or payment to stay listed.</p>
-                        </div>
+            <div class="bg-white p-6 rounded-3xl border border-slate-100 space-y-5">
+                <div class="flex gap-4">
+                    <div class="bg-blue-50 p-2 rounded-xl"><i data-lucide="key" class="text-blue-600 w-5 h-5"></i></div>
+                    <div>
+                        <h4 class="text-sm font-bold text-slate-800">Enable 2FA</h4>
+                        <p class="text-xs text-slate-500 mt-1">Always keep 2-Step verification active on your WhatsApp.</p>
                     </div>
                 </div>
             </div>
@@ -285,44 +246,165 @@
 
     <!-- Bottom Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center h-20 px-10 z-50 pb-2">
-        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1 group" data-tab="home">
-            <i data-lucide="plus-square" class="w-6 h-6"></i>
-            <span class="text-[10px] font-800 uppercase tracking-tighter">Join Hub</span>
+        <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1" data-tab="home">
+            <i data-lucide="home" class="w-6 h-6"></i>
+            <span class="text-[10px] font-800 uppercase">Home</span>
         </button>
-        <button onclick="switchTab('safety')" class="nav-item flex flex-col items-center gap-1 group" data-tab="safety">
+        <button onclick="switchTab('download')" class="nav-item flex flex-col items-center gap-1" data-tab="download">
+            <i data-lucide="layers" class="w-6 h-6"></i>
+            <span class="text-[10px] font-800 uppercase">Files</span>
+        </button>
+        <button onclick="switchTab('safety')" class="nav-item flex flex-col items-center gap-1" data-tab="safety">
             <i data-lucide="shield-check" class="w-6 h-6"></i>
-            <span class="text-[10px] font-800 uppercase tracking-tighter">Safety</span>
+            <span class="text-[10px] font-800 uppercase">Safety</span>
         </button>
     </nav>
 
     <script>
+        // CONFIGURABLE DATA
+        const CONFIG = {
+            updateDate: "Updated Today, 9:00 PM",
+            shareTarget: 5, // Number of times they need to click share
+            shareText: "Hey! Join the NaijaPro networking platform to grow your business contacts for free. Register here: " + window.location.href,
+            vcfData: [
+                { id: 1, count: 1, status: "Ongoing" },
+                { id: 2, count: 0, status: "Not yet activated" },
+                { id: 3, count: 0, status: "Not yet activated" },
+                { id: 4, count: 0, status: "Not yet activated" },
+                { id: 5, count: 0, status: "Not yet activated" },
+                { id: 6, count: 0, status: "Not yet activated" },
+                { id: 7, count: 0, status: "Not yet activated" },
+                { id: 8, count: 0, status: "Not yet activated" },
+                { id: 9, count: 0, status: "Not yet activated" },
+                { id: 10, count: 0, status: "Not yet activated" }
+            ]
+        };
+
         let submitted = false;
+        const IS_REGISTERED_KEY = 'naijapro_user_registered';
+        const SHARE_COUNT_KEY = 'naijapro_share_count';
         
         const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
         const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
         
-        const catSelect = document.getElementById('category-select');
-        categories.forEach(c => catSelect.add(new Option(c, c)));
+        // Render VCF List
+        function renderVcfFiles() {
+            const container = document.getElementById('vcf-list');
+            const shareCount = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
+            const isUnlocked = shareCount >= CONFIG.shareTarget;
+            
+            document.getElementById('update-date').innerText = CONFIG.updateDate;
 
-        const stSelect = document.getElementById('state-select');
-        states.forEach(s => stSelect.add(new Option(s, s)));
+            container.innerHTML = CONFIG.vcfData.map(vcf => {
+                const percentage = (vcf.count / 1000) * 100;
+                const statusColor = vcf.id === 1 ? 'text-red-600 font-bold' : 'text-slate-400 font-medium';
+                const pipelineColorClass = vcf.count > 0 ? '' : 'pipeline-empty';
+                
+                let pipelineText = "Empty - Not yet started";
+                if(vcf.count >= 1000) pipelineText = "Full - New batch pending";
+                else if(vcf.count > 700) pipelineText = "Almost Full";
+                else if(vcf.count > 0) pipelineText = "Filing in progress...";
 
-        function setUpdateTime() {
-            const now = new Date();
-            // Set it to yesterday or earlier today to look like a rolling update
-            const options = { day: 'numeric', month: 'short', year: 'numeric', hour: '2-digit', minute: '2-digit' };
-            document.getElementById('update-timestamp').innerText = now.toLocaleDateString('en-NG', options);
+                return `
+                    <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4">
+                        <div class="flex justify-between items-start">
+                            <div class="flex gap-4 items-center">
+                                <div class="bg-slate-50 text-slate-400 p-4 rounded-2xl">
+                                    <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
+                                </div>
+                                <div>
+                                    <h4 class="font-800 text-lg text-slate-800">Batch ${vcf.id} VCF</h4>
+                                    <p class="text-[10px] uppercase tracking-widest ${statusColor}">${vcf.status}</p>
+                                </div>
+                            </div>
+                            <div class="text-right">
+                                <p class="text-xs font-bold text-slate-800">${vcf.count}/1,000</p>
+                                <p class="text-[9px] text-slate-400 uppercase">Capacity</p>
+                            </div>
+                        </div>
+
+                        <div class="space-y-2">
+                            <div class="pipeline-container">
+                                <div class="pipeline-fill ${pipelineColorClass}" style="width: ${percentage}%"></div>
+                            </div>
+                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${pipelineText}</p>
+                        </div>
+
+                        ${isUnlocked ? 
+                            `<a href="contacts.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
+                               class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
+                            </a>` :
+                            `<button onclick="handleTaskClick()" class="w-full bg-slate-100 text-slate-400 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 cursor-not-allowed text-sm">
+                               <i data-lucide="lock" class="w-4 h-4"></i> TASK: SHARE TO UNLOCK (${shareCount}/${CONFIG.shareTarget})
+                            </button>`
+                        }
+                    </div>
+                `;
+            }).join('');
+            lucide.createIcons();
+        }
+
+        function handleTaskClick() {
+            const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
+            
+            // Logic: User clicks, we assume they shared (detecting actual WhatsApp status post is impossible via web API)
+            // But we simulate a "Verification in progress" or just count the clicks.
+            window.open(shareUrl, '_blank');
+            
+            let count = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
+            count++;
+            localStorage.setItem(SHARE_COUNT_KEY, count);
+            
+            if(count >= CONFIG.shareTarget) {
+                showAlert('Task Completed!', 'Thank you for supporting the platform. All VCF files are now unlocked for download.', 'check-circle');
+            } else {
+                showAlert('Sharing...', `You have shared ${count}/${CONFIG.shareTarget} times. Share to your WhatsApp Status / Groups/ Friends to fully unlock the files.`, 'share-2');
+            }
+            renderVcfFiles();
+        }
+
+        function checkUserStatus() {
+            const isRegistered = localStorage.getItem(IS_REGISTERED_KEY);
+            const guestView = document.getElementById('guest-view');
+            const memberView = document.getElementById('member-view');
+            const lockedDown = document.getElementById('download-locked');
+            const unlockedDown = document.getElementById('download-unlocked');
+            const statusDiv = document.getElementById('user-status');
+
+            if (isRegistered) {
+                guestView.classList.add('hidden');
+                memberView.classList.remove('hidden');
+                lockedDown.classList.add('hidden');
+                unlockedDown.classList.remove('hidden');
+                statusDiv.innerHTML = `<span class="h-2 w-2 bg-emerald-500 rounded-full"></span>
+                                       <span class="text-[10px] font-bold text-emerald-600 uppercase">Member</span>`;
+                renderVcfFiles();
+            } else {
+                guestView.classList.remove('hidden');
+                memberView.classList.add('hidden');
+                lockedDown.classList.remove('hidden');
+                unlockedDown.classList.add('hidden');
+                statusDiv.innerHTML = `<span class="h-2 w-2 bg-slate-300 rounded-full"></span>
+                                       <span class="text-[10px] font-bold text-slate-400 uppercase">Guest</span>`;
+            }
+            lucide.createIcons();
         }
 
         function switchTab(id) {
             document.querySelectorAll('.tab-content').forEach(t => t.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
             document.getElementById(`tab-${id}`).classList.add('active');
-            
             const navBtn = document.querySelector(`[data-tab="${id}"]`);
             if(navBtn) navBtn.classList.add('active');
-            
             window.scrollTo({top: 0, behavior: 'smooth'});
+        }
+
+        function handleSuccess() {
+            localStorage.setItem(IS_REGISTERED_KEY, 'true');
+            document.getElementById('form-container').classList.add('hidden');
+            document.getElementById('success-container').classList.remove('hidden');
+            checkUserStatus();
         }
 
         function showAlert(title, message, iconName = 'info') {
@@ -337,30 +419,20 @@
             document.getElementById('custom-alert').style.display = 'none';
         }
 
-        function handleSuccess() {
-            const biz = document.getElementById('business-name').value;
-            document.getElementById('form-container').classList.add('hidden');
-            document.getElementById('success-container').classList.remove('hidden');
-            document.getElementById('success-message').innerText = `Registration for "${biz}" received! As a thank you, we've unlocked the Mega VCF for you.`;
-            lucide.createIcons();
-        }
-
-        function resetForm() {
-            submitted = false;
-            document.getElementById('registration-form').reset();
-            document.getElementById('form-container').classList.remove('hidden');
-            document.getElementById('success-container').classList.add('hidden');
-            window.scrollTo({top: 0, behavior: 'smooth'});
-        }
+        // Initialize Selects
+        const catSelect = document.getElementById('category-select');
+        categories.forEach(c => catSelect.add(new Option(c, c)));
+        const stSelect = document.getElementById('state-select');
+        states.forEach(s => stSelect.add(new Option(s, s)));
 
         lucide.createIcons();
-        setUpdateTime();
+        checkUserStatus();
 
         if(!localStorage.getItem('sawDisclaimer')) {
             setTimeout(() => {
-                showAlert('Welcome Entrepreneur!', 'Listing your business is the only way to access the networking files. Use professional details only.', 'shield-check');
+                showAlert('Growth is the key!', 'Access to files requires a one-time registration and a quick share task to support the community.', 'heart');
                 localStorage.setItem('sawDisclaimer', 'true');
-            }, 500);
+            }, 800);
         }
     </script>
 </body>
