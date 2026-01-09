@@ -264,7 +264,7 @@
         // CONFIGURABLE DATA
         const CONFIG = {
             updateDate: "Updated Today, 9:00 PM",
-            shareTarget: 3, // Number of times they need to click share
+            shareTarget: 5, // Number of times they need to click share
             shareText: "Hey! Join the NaijaPro networking platform to grow your business contacts for free. Register here: " + window.location.href,
             vcfData: [
                 { id: 1, count: 80, status: "Ongoing" },
@@ -331,7 +331,7 @@
                         </div>
 
                         ${isUnlocked ? 
-                            `<a href="contacts${vcf.id}.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
+                            `<a href="contacts.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
                                class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
                                <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
                             </a>` :
