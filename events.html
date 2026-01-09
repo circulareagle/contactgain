@@ -60,7 +60,7 @@
         </button>
 
         <p class="mt-6 text-[11px] text-gray-500 leading-relaxed">
-            Automatically detects if you're using <span class="text-gray-300">iPhone</span> or <span class="text-gray-300">Android</span>. <br>Tap <b>"Add"</b> or <b>"Save"</b> on the next screen.
+            When the alarm rings, tap the <span class="text-indigo-300">link</span> in the notification to join the live session instantly.
         </p>
     </div>
 
@@ -83,7 +83,8 @@
         const TARGET_HOUR = 16; // 4 PM
         const TARGET_MIN = 45; // 45 MIN
         const EVENT_TITLE = "🔔 LIVE NOW: Grand Finale";
-        const EVENT_DESC = "The session is starting at 4:45 PM. Open the portal!";
+        const EVENT_DESC = "Click the link below to join the session now!";
+        const WEBSITE_URL = window.location.href; // This grabs your current website URL automatically
 
         // Platform Detection Logic
         const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
@@ -127,7 +128,7 @@
             const endStr = format(new Date(target.getTime() + 60 * 60000)); // 1hr duration
 
             if (isIOS) {
-                // iCal logic for iPhone
+                // iCal logic for iPhone (added URL field)
                 const icsBody = [
                     "BEGIN:VCALENDAR",
                     "VERSION:2.0",
@@ -136,6 +137,8 @@
                     `DTEND:${endStr}`,
                     `SUMMARY:${EVENT_TITLE}`,
                     `DESCRIPTION:${EVENT_DESC}`,
+                    `URL;VALUE=URI:${WEBSITE_URL}`,
+                    `LOCATION:${WEBSITE_URL}`,
                     "BEGIN:VALARM",
                     "TRIGGER:-PT0M",
                     "ACTION:DISPLAY",
@@ -153,8 +156,8 @@
                 link.click();
                 document.body.removeChild(link);
             } else {
-                // Google Calendar logic for Android
-                const gUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(EVENT_TITLE)}&details=${encodeURIComponent(EVENT_DESC)}&dates=${startStr}/${endStr}`;
+                // Google Calendar logic for Android (added location as URL)
+                const gUrl = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(EVENT_TITLE)}&details=${encodeURIComponent(EVENT_DESC)}&location=${encodeURIComponent(WEBSITE_URL)}&dates=${startStr}/${endStr}`;
                 window.open(gUrl, '_blank');
             }
 
@@ -171,4 +174,5 @@
     </script>
 </body>
 </html>
+
 
