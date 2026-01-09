@@ -331,7 +331,7 @@
                         </div>
 
                         ${isUnlocked ? 
-                            `<a href="contacts.vcf" download="NaijaPro_Batch_${id:1}.vcf" 
+                            `<a href="contacts.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
                                class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
                                <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
                             </a>` :
@@ -437,4 +437,3 @@
     </script>
 </body>
 </html>
-
