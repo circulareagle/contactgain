@@ -117,7 +117,7 @@
                         <i data-lucide="link-2" class="w-4 h-4 text-slate-400"></i>
                         <span class="text-xs font-semibold text-slate-600">Link Origin Check</span>
                     </div>
-                    <div class="status-icon"><div class="w-4 h-4 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div></div>
+                    <div class="status-icon"><i data-lucide="circle" class="w-4 h-4 text-slate-200"></i></div>
                 </div>
                 <div id="verify-step-2" class="flex items-center justify-between p-3 rounded-2xl bg-slate-50 border border-slate-100 transition-all opacity-50">
                     <div class="flex items-center gap-3">
@@ -335,7 +335,7 @@
         // CONFIGURABLE DATA
         const CONFIG = {
             updateDate: "Updated Today, 11:45 PM",
-            shareTarget: 4, // Requirement: Share to Status + 4 Groups/People
+            shareTarget: 4, 
             shareText: "Grow your business contacts for free on NaijaPro! Register and get the latest VCF batches here: " + window.location.href,
             vcfData: [
                 { id: 1, count: 842, status: "Ongoing", file: "NaijaPro_Batch_1.vcf" },
@@ -351,10 +351,9 @@
             ]
         };
 
-        // Storage Keys
         const IS_REGISTERED_KEY = 'naijapro_user_registered';
-        const TASK_PROGRESS_KEY = 'naijapro_task_progress'; // Stores object { vcfId: count }
-        const DOWNLOADED_HISTORY_KEY = 'naijapro_download_history'; // Stores array [vcfId]
+        const TASK_PROGRESS_KEY = 'naijapro_task_progress_v2'; 
+        const DOWNLOADED_HISTORY_KEY = 'naijapro_download_history_v2';
         
         let submitted = false;
         let lastShareAttemptTime = 0;
@@ -362,7 +361,6 @@
         const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
         const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
         
-        // Storage Helpers
         function getTaskProgress(vcfId) {
             const data = JSON.parse(localStorage.getItem(TASK_PROGRESS_KEY) || '{}');
             return data[vcfId] || 0;
@@ -386,9 +384,9 @@
             localStorage.setItem(DOWNLOADED_HISTORY_KEY, JSON.stringify(history));
         }
 
-        // Render VCF List
         function renderVcfFiles() {
             const container = document.getElementById('vcf-list');
+            if(!container) return;
             document.getElementById('update-date').innerText = CONFIG.updateDate;
 
             container.innerHTML = CONFIG.vcfData.map(vcf => {
@@ -475,12 +473,22 @@
         async function handleShareTask(vcfId) {
             lastShareAttemptTime = Date.now();
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
+            
+            // Open WhatsApp
             window.open(shareUrl, '_blank');
             
-            // Show rigid verification simulation
+            // Show verification modal immediately
             const modal = document.getElementById('verification-modal');
             modal.style.display = 'flex';
             
+            // Reset modal states
+            ['1','2','3'].forEach(id => {
+                const el = document.getElementById(`verify-step-${id}`);
+                el.style.opacity = id === '1' ? '1' : '0.5';
+                el.querySelector('.status-icon').innerHTML = `<i data-lucide="circle" class="w-4 h-4 text-slate-200"></i>`;
+            });
+            lucide.createIcons();
+
             const steps = [
                 { id: 'verify-step-1', delay: 1800 },
                 { id: 'verify-step-2', delay: 2200 },
@@ -490,6 +498,7 @@
             for (let i = 0; i < steps.length; i++) {
                 const stepEl = document.getElementById(steps[i].id);
                 stepEl.style.opacity = '1';
+                stepEl.querySelector('.status-icon').innerHTML = `<div class="w-4 h-4 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div>`;
                 
                 await new Promise(r => setTimeout(r, steps[i].delay));
                 
@@ -497,33 +506,26 @@
                 lucide.createIcons();
             }
 
-            // Sincerity Bot Check
+            // Checklist Finished - Now Check Time
             const returnTime = Date.now();
             const elapsedSeconds = (returnTime - lastShareAttemptTime) / 1000;
 
             modal.style.display = 'none';
-            // Reset modal for next use
-            steps.forEach(s => {
-                const el = document.getElementById(s.id);
-                el.style.opacity = '0.5';
-                el.querySelector('.status-icon').innerHTML = i === 0 ? `<div class="w-4 h-4 border-2 border-slate-200 border-t-emerald-500 rounded-full animate-spin"></div>` : `<i data-lucide="circle" class="w-4 h-4 text-slate-200"></i>`;
-            });
 
-            if (elapsedSeconds < 5) {
-                showAlert('Security Alert', 'System detect no sharing was initiated. Please actually share the link to WhatsApp to proceed.', 'shield-alert');
+            if (elapsedSeconds < 6) {
+                showAlert('Security Alert', 'System detect no sharing was initiated. Please actually share to WhatsApp and spend at least 6 seconds on the app.', 'shield-alert');
             } else {
                 const newCount = incrementTaskProgress(vcfId);
                 if(newCount >= CONFIG.shareTarget) {
                     showAlert('Verification Successful', 'Batch unlocked! You can now download your VCF file.', 'check-circle');
                 } else {
-                    showAlert('Task Recorded', `Verification passed. (${newCount}/${CONFIG.shareTarget}) shares confirmed for this file.`, 'shield-check');
+                    showAlert('Task Recorded', `Verification passed. (${newCount}/${CONFIG.shareTarget}) shares confirmed for Batch ${vcfId}.`, 'shield-check');
                 }
             }
             renderVcfFiles();
         }
 
         function performDownload(vcfId, filename) {
-            // Initiate download
             const link = document.createElement('a');
             link.href = filename;
             link.download = filename;
@@ -531,7 +533,6 @@
             link.click();
             document.body.removeChild(link);
 
-            // Mark as downloaded and lock UI
             markAsDownloaded(vcfId);
             renderVcfFiles();
             
@@ -539,7 +540,6 @@
         }
 
         function handleGoToFiles() {
-            // Show the promo first
             document.getElementById('whatsapp-promo').style.display = 'flex';
         }
 
@@ -612,10 +612,9 @@
         lucide.createIcons();
         checkUserStatus();
 
-        // Initial welcome message
         if(!localStorage.getItem('sawDisclaimer')) {
             setTimeout(() => {
-                showAlert('Unlock Your Growth', 'Registration and a quick sharing task are required to access our community networking batches. Help us grow as you grow!', 'heart');
+                showAlert('Unlock Your Growth', 'Registration and a quick sharing task are required to access our community networking batches.', 'heart');
                 localStorage.setItem('sawDisclaimer', 'true');
             }, 1000);
         }
