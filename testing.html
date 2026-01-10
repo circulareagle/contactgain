@@ -34,12 +34,7 @@
         .nav-item.active { color: var(--primary); }
         .nav-item.active i { transform: translateY(-4px); transition: transform 0.3s ease; }
         
-        .input-focus:focus {
-            border-color: var(--primary);
-            box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
-        }
-        
-        #custom-alert, #whatsapp-promo { display: none; }
+        #custom-alert, #whatsapp-promo, #verification-modal { display: none; }
 
         /* Pipeline Styles */
         .pipeline-container {
@@ -65,6 +60,21 @@
         .pipeline-empty {
             background: #cbd5e1 !important;
         }
+
+        /* Scan Line Animation */
+        .scan-line {
+            position: absolute;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 15px 2px rgba(16, 185, 129, 0.8);
+            animation: scan 2s linear infinite;
+        }
+        @keyframes scan {
+            0% { top: 0%; }
+            100% { top: 100%; }
+        }
     </style>
 </head>
 <body class="text-slate-900 pb-28">
@@ -84,12 +94,54 @@
     </header>
 
     <!-- Alert Modal -->
-    <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
+    <div id="custom-alert" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
             <div id="alert-icon" class="mb-4 text-center"></div>
             <h3 id="alert-title" class="text-xl font-bold text-slate-900 mb-2 text-center">Notice</h3>
             <p id="alert-message" class="text-sm text-slate-600 mb-8 leading-relaxed text-center"></p>
             <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-200">Got it!</button>
+        </div>
+    </div>
+
+    <!-- Verification Modal (Sincerity Bot) -->
+    <div id="verification-modal" class="fixed inset-0 z-[70] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-xl">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative overflow-hidden">
+            <div class="scan-line"></div>
+            <div class="text-center mb-6">
+                <div class="w-16 h-16 bg-emerald-50 rounded-full flex items-center justify-center mx-auto mb-3">
+                    <i data-lucide="shield-check" class="text-emerald-600 w-8 h-8 animate-pulse"></i>
+                </div>
+                <h3 class="text-lg font-bold text-slate-900">Verification in Progress</h3>
+                <p class="text-[10px] text-slate-400 uppercase tracking-widest font-bold">Cross-Platform Syncing</p>
+            </div>
+
+            <div class="space-y-4" id="verification-checklist">
+                <div class="flex items-center gap-3 opacity-25 transition-opacity duration-300" id="step-1">
+                    <div class="check-icon w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-600 hidden"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-600">WhatsApp Handshake</span>
+                </div>
+                <div class="flex items-center gap-3 opacity-25 transition-opacity duration-300" id="step-2">
+                    <div class="check-icon w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-600 hidden"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-600">Metadata Extraction</span>
+                </div>
+                <div class="flex items-center gap-3 opacity-25 transition-opacity duration-300" id="step-3">
+                    <div class="check-icon w-5 h-5 rounded-full bg-emerald-100 flex items-center justify-center">
+                        <i data-lucide="check" class="w-3 h-3 text-emerald-600 hidden"></i>
+                    </div>
+                    <span class="text-xs font-semibold text-slate-600">Status Post Entry Validation</span>
+                </div>
+            </div>
+
+            <div class="mt-8">
+                <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                    <div id="verification-progress" class="bg-emerald-500 h-full w-0 transition-all duration-[6000ms] linear"></div>
+                </div>
+                <p class="text-[9px] text-center text-slate-400 mt-2 font-bold uppercase">System is performing a cross-platform check...</p>
+            </div>
         </div>
     </div>
 
@@ -99,11 +151,11 @@
             <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                 <i data-lucide="bell" class="text-emerald-600 w-8 h-8"></i>
             </div>
-            <h3 class="text-xl font-bold text-slate-900 mb-2">Stay Updated!</h3>
-            <p class="text-sm text-slate-600 mb-8 leading-relaxed">Join our Official WhatsApp Channel to get instant notifications whenever new VCF batches are uploaded.</p>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Join Official Channel!</h3>
+            <p class="text-sm text-slate-600 mb-8 leading-relaxed">Before accessing the files, make sure to join our WhatsApp Channel for real-time updates on new VCF drops.</p>
             <div class="space-y-3">
-                <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" onclick="closePromo()" class="block w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200">Join Channel Now</a>
-                <button onclick="closePromo()" class="w-full text-slate-400 font-bold py-2 text-sm">Maybe Later</button>
+                <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" onclick="finishPromo()" class="block w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200">Join Channel Now</a>
+                <button onclick="finishPromo()" class="w-full text-slate-400 font-bold py-2 text-sm">Cancel / Done</button>
             </div>
         </div>
     </div>
@@ -154,22 +206,22 @@
                           onsubmit="submitted=true;">
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Business/Brand Name</label>
-                            <input required type="text" name="entry.403300635" placeholder="e.g. Lagos Tech Hub" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
+                            <input required type="text" name="entry.403300635" placeholder="e.g. Lagos Tech Hub" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-sm">
                         </div>
                         <div>
                             <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">WhatsApp Business Number</label>
-                            <input required type="tel" name="entry.1493637334" placeholder="0801 234 5678" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all input-focus text-sm">
+                            <input required type="tel" name="entry.1493637334" placeholder="0801 234 5678" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl outline-none transition-all text-sm">
                         </div>
                         <div class="grid grid-cols-2 gap-4">
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Category</label>
-                                <select required name="entry.50410248" id="category-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
+                                <select required name="entry.50410248" id="category-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none appearance-none">
                                     <option value="">Select Industry</option>
                                 </select>
                             </div>
                             <div>
                                 <label class="block text-[11px] font-bold text-slate-400 uppercase tracking-wider mb-2 ml-1">Location</label>
-                                <select required name="entry.1635387367" id="state-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none input-focus appearance-none">
+                                <select required name="entry.1635387367" id="state-select" class="w-full p-4 bg-slate-50 border border-slate-200 rounded-2xl text-sm outline-none appearance-none">
                                     <option value="">Select State</option>
                                 </select>
                             </div>
@@ -223,10 +275,7 @@
                     </div>
                 </div>
                 
-                <!-- 10 VCF FILE LIST -->
-                <div id="vcf-list" class="space-y-4">
-                    <!-- Cards generated by JS -->
-                </div>
+                <div id="vcf-list" class="space-y-4"></div>
 
                 <div class="bg-blue-50 border border-blue-100 p-5 rounded-3xl flex flex-col gap-3">
                     <div class="flex gap-4">
@@ -259,7 +308,7 @@
         </section>
     </main>
 
-    <!-- Bottom Navigation -->
+    <!-- Navigation -->
     <nav class="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-xl border-t border-slate-100 flex justify-around items-center h-20 px-10 z-50 pb-2">
         <button onclick="switchTab('home')" class="nav-item active flex flex-col items-center gap-1" data-tab="home">
             <i data-lucide="home" class="w-6 h-6"></i>
@@ -276,41 +325,50 @@
     </nav>
 
     <script>
-        // CONFIGURABLE DATA
         const CONFIG = {
-            updateDate: "Updated Yesterday, 11:45 PM",
-            shareTarget: 3, // Requirements for shares to unlock
+            updateDate: "Updated Today, 11:45 PM",
+            shareTarget: 4, 
             shareText: "Grow your business contacts for free on NaijaPro! Register and get the latest VCF batches here: " + window.location.href,
             vcfData: [
-                { id: 1, count: 16, status: "Ongoing", file: "contacts.vcf" },
-                { id: 2, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_2.vcf" },
-                { id: 3, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_3.vcf" },
-                { id: 4, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_4.vcf" },
-                { id: 5, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_5.vcf" },
-                { id: 6, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_6.vcf" },
-                { id: 7, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_7.vcf" },
-                { id: 8, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_8.vcf" },
-                { id: 9, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_9.vcf" },
-                { id: 10, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_10.vcf" }
+                { id: 1, count: 912, status: "Ongoing", file: "NaijaPro_Batch_1.vcf?v=2" },
+                { id: 2, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_2.vcf?v=2" },
+                { id: 3, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_3.vcf?v=2" },
+                { id: 4, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_4.vcf?v=2" },
+                { id: 5, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_5.vcf?v=2" },
+                { id: 6, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_6.vcf?v=2" },
+                { id: 7, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_7.vcf?v=2" },
+                { id: 8, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_8.vcf?v=2" },
+                { id: 9, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_9.vcf?v=2" },
+                { id: 10, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_10.vcf?v=2" }
             ]
         };
 
+        const IS_REGISTERED_KEY = 'naijapro_user_registered_v2';
+        const TASK_PROGRESS_KEY = 'naijapro_task_progress_v2';
+        const DOWNLOADED_HISTORY_KEY = 'naijapro_dl_history_v2';
+        
         let submitted = false;
-        const IS_REGISTERED_KEY = 'naijapro_user_registered';
-        const SHARE_COUNT_KEY = 'naijapro_share_count';
-        
-        const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
-        const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
-        
-        // Render VCF List
+        let shareTimeStart = 0;
+
+        function getTaskProgress() {
+            return JSON.parse(localStorage.getItem(TASK_PROGRESS_KEY) || '{}');
+        }
+
+        function getDownloadHistory() {
+            return JSON.parse(localStorage.getItem(DOWNLOADED_HISTORY_KEY) || '[]');
+        }
+
         function renderVcfFiles() {
             const container = document.getElementById('vcf-list');
-            const shareCount = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
-            const isUnlocked = shareCount >= CONFIG.shareTarget;
+            const progress = getTaskProgress();
+            const history = getDownloadHistory();
             
             document.getElementById('update-date').innerText = CONFIG.updateDate;
 
             container.innerHTML = CONFIG.vcfData.map(vcf => {
+                const count = progress[vcf.id] || 0;
+                const isDownloaded = history.includes(vcf.id);
+                const isUnlocked = count >= CONFIG.shareTarget;
                 const percentage = (vcf.count / 1000) * 100;
                 const isFirst = vcf.id === 1;
                 const statusColor = isFirst ? 'text-red-600 font-extrabold' : 'text-slate-400 font-bold';
@@ -320,6 +378,32 @@
                 if(vcf.count >= 1000) pipelineText = "Full - New batch pending";
                 else if(vcf.count > 700) pipelineText = "Almost Full";
                 else if(vcf.count > 0) pipelineText = "Filing in progress...";
+
+                let actionButton = '';
+                if (isDownloaded) {
+                    actionButton = `
+                        <div class="text-center p-4 bg-slate-50 rounded-2xl border border-dashed border-slate-200">
+                            <p class="text-[11px] font-bold text-slate-500 mb-3 uppercase leading-tight">This file has been locked again for tomorrow's next VCF. Share to your status + 4 Groups/People to prepare.</p>
+                            <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="w-full bg-emerald-100 text-emerald-700 font-bold py-3 rounded-xl flex items-center justify-center gap-2 text-xs">
+                                <i data-lucide="bell" class="w-3 h-3"></i> Join WhatsApp Channel
+                            </a>
+                        </div>
+                    `;
+                } else if (isUnlocked) {
+                    actionButton = `
+                        <button onclick="performDownload(${vcf.id}, '${vcf.file}')" 
+                               class="w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
+                        </button>
+                    `;
+                } else {
+                    actionButton = `
+                        <button onclick="initiateShare(${vcf.id})" class="w-full bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:bg-slate-200 transition-all text-sm group">
+                               <i data-lucide="share-2" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i> 
+                               SHARE TO UNLOCK (${count}/${CONFIG.shareTarget})
+                        </button>
+                    `;
+                }
 
                 return `
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4">
@@ -338,7 +422,6 @@
                                 <p class="text-[9px] text-slate-400 uppercase">Capacity</p>
                             </div>
                         </div>
-
                         <div class="space-y-2">
                             <div class="pipeline-container">
                                 <div class="pipeline-fill ${pipelineColorClass}" style="width: ${percentage}%"></div>
@@ -348,46 +431,87 @@
                                 ${vcf.count > 0 ? `<span class="text-[9px] font-bold text-red-500">${Math.round(percentage)}%</span>` : ''}
                             </div>
                         </div>
-
-                        ${isUnlocked ? 
-                            `<a href="${vcf.file}" download="${vcf.file}" 
-                               class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
-                               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
-                            </a>` :
-                            `<button onclick="handleTaskClick()" class="w-full bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:bg-slate-200 transition-all text-sm group">
-                               <i data-lucide="share-2" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i> 
-                               SHARE TO UNLOCK (${shareCount}/${CONFIG.shareTarget})
-                            </button>`
-                        }
+                        ${actionButton}
                     </div>
                 `;
             }).join('');
             lucide.createIcons();
         }
 
-        function handleTaskClick() {
+        function initiateShare(vcfId) {
+            shareTimeStart = Date.now();
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
             window.open(shareUrl, '_blank');
             
-            // Increment share count locally
-            let count = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
-            count++;
-            localStorage.setItem(SHARE_COUNT_KEY, count);
+            // Show verification modal after they return (simulate waiting)
+            setTimeout(() => runVerification(vcfId), 1000);
+        }
+
+        async function runVerification(vcfId) {
+            const timeElapsed = Date.now() - shareTimeStart;
             
-            if(count >= CONFIG.shareTarget) {
-                showAlert('Task Completed!', 'Thank you for sharing! All 10 VCF files are now unlocked for your account.', 'check-circle');
-            } else {
-                showAlert('Sharing Progress', `You have shared ${count} of ${CONFIG.shareTarget} times. Share to your WhatsApp Status/Groups to unlock the files immediately.`, 'share-2');
+            // "Sincerity Bot" Logic: 5-second check
+            if (timeElapsed < 5000) {
+                showAlert('Security Alert', 'System detected no sharing was initiated. Please actually share to your status or groups to proceed.', 'shield-alert');
+                return;
             }
+
+            const modal = document.getElementById('verification-modal');
+            const steps = [document.getElementById('step-1'), document.getElementById('step-2'), document.getElementById('step-3')];
+            const progress = document.getElementById('verification-progress');
+            
+            modal.style.display = 'flex';
+            progress.style.width = '100%';
+
+            for(let i=0; i<steps.length; i++) {
+                await new Promise(r => setTimeout(r, 2000));
+                steps[i].style.opacity = '1';
+                steps[i].querySelector('i').classList.remove('hidden');
+                steps[i].querySelector('.check-icon').classList.replace('bg-emerald-100', 'bg-emerald-500');
+                steps[i].querySelector('i').classList.add('text-white');
+                lucide.createIcons();
+            }
+
+            setTimeout(() => {
+                modal.style.display = 'none';
+                progress.style.width = '0%';
+                steps.forEach(s => {
+                    s.style.opacity = '0.25';
+                    s.querySelector('i').classList.add('hidden');
+                    s.querySelector('.check-icon').classList.replace('bg-emerald-500', 'bg-emerald-100');
+                });
+
+                // Update Progress
+                let p = getTaskProgress();
+                p[vcfId] = (p[vcfId] || 0) + 1;
+                localStorage.setItem(TASK_PROGRESS_KEY, JSON.stringify(p));
+                renderVcfFiles();
+            }, 800);
+        }
+
+        function performDownload(vcfId, fileName) {
+            const history = getDownloadHistory();
+            if (!history.includes(vcfId)) {
+                history.push(vcfId);
+                localStorage.setItem(DOWNLOADED_HISTORY_KEY, JSON.stringify(history));
+            }
+            
+            // Trigger actual download
+            const link = document.createElement('a');
+            link.href = fileName;
+            link.download = fileName;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
             renderVcfFiles();
         }
 
         function handleGoToFiles() {
-            // Show the promo first
             document.getElementById('whatsapp-promo').style.display = 'flex';
         }
 
-        function closePromo() {
+        function finishPromo() {
             document.getElementById('whatsapp-promo').style.display = 'none';
             switchTab('download');
         }
@@ -447,7 +571,10 @@
             document.getElementById('custom-alert').style.display = 'none';
         }
 
-        // Initialize Selects
+        // Init
+        const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
+        const states = ["Lagos", "Abuja", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
+        
         const catSelect = document.getElementById('category-select');
         categories.forEach(c => catSelect.add(new Option(c, c)));
         const stSelect = document.getElementById('state-select');
@@ -455,14 +582,6 @@
 
         lucide.createIcons();
         checkUserStatus();
-
-        // Initial welcome message
-        if(!localStorage.getItem('sawDisclaimer')) {
-            setTimeout(() => {
-                showAlert('Unlock Your Growth', 'Registration and a quick sharing task are required to access our community networking batches. Help us grow as you grow!', 'heart');
-                localStorage.setItem('sawDisclaimer', 'true');
-            }, 1000);
-        }
     </script>
 </body>
 </html>
