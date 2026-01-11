@@ -73,7 +73,9 @@
             background: linear-gradient(90deg, transparent, #22c55e, transparent);
             position: absolute;
             top: 0;
-            transition: top 0.1s linear;
+        }
+        .scan-active #scan-line {
+             animation: scan 6s infinite linear alternate;
         }
         @keyframes scan {
             0% { top: 0; }
@@ -93,7 +95,14 @@
                 </h1>
                 <p class="text-[10px] font-bold text-emerald-600/60 uppercase tracking-widest mt-1">Commercial Networking Only</p>
             </div>
-            <div id="user-status" class="flex gap-2 items-center"></div>
+            <!-- User Status now shows User ID and Member status -->
+            <div id="user-status" class="flex gap-2 items-center">
+                 <span class="h-2 w-2 bg-slate-300 rounded-full"></span>
+                 <span id="auth-status-text" class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Guest</span>
+            </div>
+        </div>
+        <div id="user-id-display" class="text-xs font-mono text-slate-400 mt-2 text-center break-all">
+            Loading User ID...
         </div>
     </header>
 
@@ -122,48 +131,34 @@
         </div>
     </div>
 
-    <!-- Sincerity Bot Verification Modal -->
+    <!-- Sincerity Bot Verification Modal (Now a WAITING modal) -->
     <div id="verify-modal" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-xl">
-        <div class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden">
-            <div id="scan-line" class="absolute top-0 left-0 right-0 h-[2px] bg-emerald-500/80 shadow-lg" style="animation-direction: alternate;"></div>
+        <div id="verification-card" class="bg-white rounded-3xl p-6 max-w-sm w-full shadow-2xl relative overflow-hidden transition-all duration-300">
+            <div id="scan-line-container" class="absolute inset-0 z-0 opacity-10">
+                <div id="scan-line" class="absolute top-0 left-0 right-0 h-[3px] bg-emerald-500 shadow-lg"></div>
+            </div>
             
-            <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-center mx-auto mb-4 w-16 h-16">
-                <i data-lucide="shield-half" class="text-emerald-600 w-8 h-8"></i>
-            </div>
-            <h3 id="verification-title" class="text-xl font-bold text-slate-900 mb-1 text-center">Initiating Verification...</h3>
-            <p class="text-xs text-slate-500 mb-6 leading-relaxed text-center">System is performing a cross-platform check...</p>
+            <div class="relative z-10">
+                <div class="bg-slate-50 p-4 rounded-2xl flex items-center justify-center mx-auto mb-4 w-16 h-16">
+                    <i data-lucide="shield-half" class="text-emerald-600 w-8 h-8"></i>
+                </div>
+                <h3 id="verification-title" class="text-xl font-bold text-slate-900 mb-1 text-center">Initiating Verification...</h3>
+                <p id="verification-subtitle" class="text-xs text-slate-500 mb-6 leading-relaxed text-center">
+                    Please complete the WhatsApp share and return to this page.
+                </p>
 
-            <div class="space-y-4">
-                <!-- Step 1 -->
-                <div id="step-1" class="verification-step flex items-center justify-between transition-all">
-                    <span class="flex items-center gap-3 text-sm text-slate-500">
-                        <span class="status-icon"><i data-lucide="loader" class="w-4 h-4 animate-spin text-slate-300"></i></span>
-                        WhatsApp Handshake established
-                    </span>
-                    <i data-lucide="check-circle" class="w-4 h-4 text-slate-400"></i>
+                <!-- Status Panel (Integrated from previous example) -->
+                 <div id="status-panel" class="p-4 rounded-xl border border-dashed border-indigo-300 mb-6 transition-all duration-300">
+                    <div class="flex items-center space-x-3">
+                        <svg id="status-icon" class="w-6 h-6 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                        <p id="status-message" class="text-sm font-semibold text-gray-800">Waiting for app to lose focus...</p>
+                    </div>
+                    <p class="text-[10px] text-slate-400 mt-2">Min required task time: <span class="font-bold">6 seconds</span>.</p>
                 </div>
-                <!-- Step 2 -->
-                <div id="step-2" class="verification-step flex items-center justify-between transition-all">
-                    <span class="flex items-center gap-3 text-sm text-slate-500">
-                        <span class="status-icon"><i data-lucide="loader" class="w-4 h-4 animate-spin text-slate-300"></i></span>
-                        Metadata Extraction complete
-                    </span>
-                    <i data-lucide="check-circle" class="w-4 h-4 text-slate-400"></i>
-                </div>
-                <!-- Step 3 -->
-                <div id="step-3" class="verification-step flex items-center justify-between transition-all">
-                    <span class="flex items-center gap-3 text-sm text-slate-500">
-                        <span class="status-icon"><i data-lucide="loader" class="w-4 h-4 animate-spin text-slate-300"></i></span>
-                        Status Post Entry confirmed
-                    </span>
-                    <i data-lucide="check-circle" class="w-4 h-4 text-slate-400"></i>
-                </div>
-            </div>
 
-            <div class="mt-6">
-                <div class="h-2 bg-slate-100 rounded-full overflow-hidden">
-                    <div id="verification-progress" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%;"></div>
-                </div>
+                <p id="verification-footer" class="text-xs text-center text-slate-500/80 font-medium">
+                    Do not close the browser or minimize this app until verification is complete.
+                </p>
             </div>
         </div>
     </div>
@@ -302,12 +297,26 @@
             </div>
         </section>
 
-        <!-- SAFETY TAB -->
+        <!-- SAFETY TAB (LOGS ADDED HERE) -->
         <section id="tab-safety" class="tab-content space-y-6">
             <div class="bg-slate-900 p-6 rounded-3xl text-white shadow-xl">
                 <h2 class="text-xl font-bold flex items-center gap-2"><i data-lucide="shield"></i> Safety & Ethics</h2>
                 <p class="text-xs opacity-90 mt-2">Protect your account and your business.</p>
             </div>
+            
+            <!-- Sincerity Bot Audit Log (New Section) -->
+            <div id="verification-log-card" class="bg-white p-6 rounded-3xl border border-red-500/10 space-y-4 shadow-lg">
+                <h3 class="text-lg font-bold text-red-600 flex items-center gap-2">
+                    <i data-lucide="eye-off" class="w-5 h-5"></i> Sincerity Bot Audit Log
+                </h3>
+                <p class="text-xs text-slate-500">
+                    Tracks verification attempts and cross-platform timing for compliance (Min <span class="font-bold text-red-500">6s</span> required).
+                </p>
+                <div id="log-container" class="space-y-3 max-h-60 overflow-y-auto p-3 bg-gray-50 border border-gray-200 rounded-lg">
+                    <p class="text-gray-400 text-sm">Waiting for real-time logs...</p>
+                </div>
+            </div>
+
             <div class="bg-white p-6 rounded-3xl border border-slate-100 space-y-5">
                 <div class="flex gap-4">
                     <div class="bg-blue-50 p-2 rounded-xl"><i data-lucide="key" class="text-blue-600 w-5 h-5"></i></div>
@@ -336,12 +345,29 @@
         </button>
     </nav>
 
-    <script>
-        // --- CONFIGURABLE DATA ---
+    <script type="module">
+        // --- FIREBASE IMPORTS ---
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, addDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // --- ENVIRONMENT VARIABLES (Mandatory for Canvas) ---
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        // --- CONFIGURABLE DATA & STATE ---
+        const MIN_VERIFICATION_SECONDS = 6; // Mandatory minimum time user must be away
+        let timeAppLostFocus = null; // Timestamp when visibility became 'hidden'
+        let db;
+        let auth;
+        let userId = null;
+        let isAuthReady = false;
+
         const CONFIG = {
             updateDate: "Updated Today, 11:45 PM",
             shareTargetUnlock: 3, // Shares needed to unlock the file
-            shareTargetPostDownload: 4, // Shares needed for the 'locked for tomorrow' message (not strictly tracked, but displayed)
+            shareTargetPostDownload: 4, // Shares needed for the 'locked for tomorrow' message
             shareText: "Grow your business contacts for free on NaijaPro! Register and get the latest VCF batches here: " + window.location.href,
             vcfData: [
                 { id: 1, count: 842, status: "Ongoing", file: "NaijaPro_Batch_1.vcf" },
@@ -357,20 +383,257 @@
             ]
         };
 
-        // --- PERSISTENCE KEYS ---
+        // --- PERSISTENCE KEYS (Still using localStorage for client-side app data) ---
         const IS_REGISTERED_KEY = 'naijapro_user_registered';
-        const TASK_PROGRESS_KEY = 'naijapro_task_progress'; // Stores { '1': 0, '2': 3 }
-        const DOWNLOADED_HISTORY_KEY = 'naijapro_downloaded_history'; // Stores { '1': true, '3': true }
-        const SHARE_DELAY_START_KEY = 'naijapro_share_start_time'; // Stores timestamp for Sincerity Bot
-        const MIN_SHARE_TIME = 5000; // 5 seconds minimum for Sincerity Bot
+        const TASK_PROGRESS_KEY = 'naijapro_task_progress';
+        const DOWNLOADED_HISTORY_KEY = 'naijapro_downloaded_history';
 
         let submitted = false;
-        let currentVcfId = null;
+        let currentVcfId = null; // Used to track which VCF file is being unlocked
+        let isVerificationAttempting = false; // Prevents logging spam
 
         const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
-        const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
+        const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "R.S", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
         
-        // --- UTILITY FUNCTIONS ---
+        // --- DOM ELEMENTS (For quick access in verification logic) ---
+        const statusPanel = document.getElementById('status-panel');
+        const statusIcon = document.getElementById('status-icon');
+        const statusMessage = document.getElementById('status-message');
+        const logContainer = document.getElementById('log-container');
+        const userIdDisplay = document.getElementById('user-id-display');
+        const authStatusText = document.getElementById('auth-status-text');
+        const verifyModal = document.getElementById('verify-modal');
+        const verificationCard = document.getElementById('verification-card');
+
+
+        // --- FIREBASE & AUDIT LOGIC ---
+
+        /** Formats a timestamp for display. */
+        function formatTime(timestamp) {
+            if (!timestamp) return 'N/A';
+            const date = timestamp.toDate ? timestamp.toDate() : new Date(timestamp);
+            return date.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        }
+        
+        /** Gets the Firestore path for the verification logs collection. */
+        function getLogCollectionRef() {
+            if (!db || !userId) return null;
+            // Private data storage path: /artifacts/{appId}/users/{userId}/verification_logs
+            return collection(db, 'artifacts', appId, 'users', userId, 'verification_logs');
+        }
+
+        /** Logs an event to Firestore. */
+        async function logEvent(type, details, duration_seconds = null, verification_status = null) {
+            const logRef = getLogCollectionRef();
+            if (!logRef) return;
+
+            try {
+                const logData = {
+                    timestamp: serverTimestamp(),
+                    type,
+                    details,
+                    duration_seconds,
+                    verification_status,
+                };
+                await addDoc(logRef, logData);
+                console.log(`[Firestore Log] ${type}: ${details}`);
+            } catch (error) {
+                console.error("Error writing document:", error);
+            }
+        }
+
+        /** Sets up real-time listener for log updates. */
+        function setupLogListener() {
+            const logRef = getLogCollectionRef();
+            if (!logRef) return;
+
+            // Sort logs by timestamp (descending for newest first)
+            const logQuery = query(logRef, orderBy('timestamp', 'desc'));
+
+            onSnapshot(logQuery, (snapshot) => {
+                logContainer.innerHTML = ''; // Clear existing logs
+
+                if (snapshot.empty) {
+                    logContainer.innerHTML = '<p class="text-gray-400 text-sm">No activity recorded yet. Minimize the app to start tracking.</p>';
+                    return;
+                }
+
+                snapshot.docs.forEach(doc => {
+                    const data = doc.data();
+                    const time = formatTime(data.timestamp);
+                    let color = 'text-gray-800';
+                    let icon = '🟣';
+                    let borderClass = 'border-indigo-400';
+
+                    if (data.type === 'EXIT') {
+                        color = 'text-red-600';
+                        icon = '🔴';
+                        borderClass = 'border-red-400';
+                    } else if (data.type === 'RETURN') {
+                        icon = '🟢';
+                        if (data.verification_status === 'PASSED') {
+                            color = 'text-green-600';
+                            borderClass = 'border-green-400';
+                        } else if (data.verification_status && data.verification_status.startsWith('FAILED')) {
+                            color = 'text-red-700';
+                            borderClass = 'border-red-600';
+                        }
+                    }
+
+                    const durationHtml = data.duration_seconds 
+                        ? `<p class="text-xs text-gray-500 mt-1">Duration Outside: <span class="font-semibold">${data.duration_seconds.toFixed(1)}s</span></p>` 
+                        : '';
+                    
+                    const logEntry = `
+                        <div class="text-sm p-2 bg-white rounded-lg shadow-sm border-l-4 ${borderClass}">
+                            <span class="font-mono text-xs text-gray-400">${time}</span>
+                            <p class="${color} font-medium mt-1">
+                                ${icon} ${data.details}
+                            </p>
+                            ${durationHtml}
+                        </div>
+                    `;
+                    logContainer.innerHTML += logEntry;
+                });
+            }, (error) => {
+                console.error("Error listening to logs:", error);
+                logContainer.innerHTML = '<p class="text-red-500 text-sm">Error loading logs.</p>';
+            });
+        }
+
+        /** Handles visibility changes (user leaving/returning to the tab/app). */
+        function handleVisibilityChange() {
+            if (!isAuthReady || !userId || !isVerificationAttempting) {
+                // Only track visibility changes when an attempt is in progress
+                return;
+            }
+
+            if (document.visibilityState === 'hidden') {
+                // 1. App Lost Focus (User left to go to WhatsApp, etc.)
+                timeAppLostFocus = Date.now();
+                
+                // Update Modal UI
+                updateModalStatusUI('red', '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>', 'LOST FOCUS: Logging time away...');
+                verificationCard.classList.add('scan-active');
+
+                logEvent('EXIT', `App lost focus (WA share started)`);
+
+            } else if (document.visibilityState === 'visible') {
+                // 2. App Regained Focus (User returned)
+                const timeAppRegainedFocus = Date.now();
+                verificationCard.classList.remove('scan-active');
+                
+                if (timeAppLostFocus) {
+                    const durationMs = timeAppRegainedFocus - timeAppLostFocus;
+                    const durationSeconds = durationMs / 1000;
+                    
+                    let verificationStatus;
+                    let message;
+                    let color;
+                    let icon;
+                    let vcfIdToUpdate = currentVcfId;
+                    
+                    // 3. Perform Verification Check
+                    if (durationSeconds >= MIN_VERIFICATION_SECONDS) {
+                        // Verification Success
+                        verificationStatus = 'PASSED';
+                        message = `VERIFICATION PASSED: Task completed in ${durationSeconds.toFixed(1)}s.`;
+                        color = 'green';
+                        icon = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>';
+                        
+                        // Proceed to update client-side progress if not a post-download share (vcfId 0)
+                        if (vcfIdToUpdate !== 0) {
+                            processSuccessfulVerification(vcfIdToUpdate);
+                        } else {
+                            // This is a share for tomorrow's file
+                            showAlert('Share Acknowledged', `Your share has been detected and logged for the next batch drop. Thank you for preparing!`, 'share-2');
+                        }
+
+                    } else {
+                        // Verification Failure (Faked completion)
+                        verificationStatus = 'FAILED_QUICK_RETURN';
+                        message = `VERIFICATION FAILED: Returned too quickly (${durationSeconds.toFixed(1)}s). Min time: ${MIN_VERIFICATION_SECONDS}s.`;
+                        color = 'red';
+                        icon = '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>';
+
+                        showAlert('Security Alert: Verification Failed', `System detected you returned too quickly (${durationSeconds.toFixed(1)}s). Please spend at least ${MIN_VERIFICATION_SECONDS} seconds on WhatsApp to complete the share task.`, 'alert-triangle');
+                    }
+                    
+                    // 4. Log the Return Event with Results
+                    logEvent('RETURN', message, durationSeconds, verificationStatus);
+
+                    // 5. Cleanup and Reset
+                    updateModalStatusUI(color, icon, message);
+                    setTimeout(() => {
+                        verifyModal.style.display = 'none'; // Hide modal after result is shown briefly
+                        isVerificationAttempting = false;
+                        currentVcfId = null;
+                        renderVcfFiles(); // Re-render file list to reflect progress/failure
+                    }, 1500);
+
+                    timeAppLostFocus = null; // Reset tracker
+                } else {
+                    // App started in background or simply regained focus without a tracked exit
+                    updateModalStatusUI('indigo', '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>', 'ACTIVE: Waiting for loss of focus...');
+                    logEvent('INFO', `App active. No previous exit recorded.`);
+                }
+            }
+        }
+
+        /** Updates the status panel inside the verification modal. */
+        function updateModalStatusUI(colorClass, iconSvg, message) {
+            statusPanel.className = statusPanel.className.replace(/border-.*-300/g, `border-${colorClass}-300`);
+            statusIcon.innerHTML = iconSvg;
+            statusMessage.textContent = message;
+            statusIcon.className = statusIcon.className.replace(/text-.*-500/g, `text-${colorClass}-500`);
+            statusMessage.className = statusMessage.className.replace(/text-.*-800/g, `text-${colorClass}-800`);
+            lucide.createIcons();
+        }
+
+        function setupAuthAndListeners() {
+            if (document.visibilityState === 'visible') {
+                updateModalStatusUI('indigo', '<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>', 'ACTIVE: Ready to track focus...');
+            }
+            document.addEventListener('visibilitychange', handleVisibilityChange);
+        }
+
+        async function initializeFirebase() {
+            try {
+                setLogLevel('debug'); // Enable Firestore logging
+                const app = initializeApp(firebaseConfig);
+                db = getFirestore(app);
+                auth = getAuth(app);
+                
+                if (initialAuthToken) {
+                    await signInWithCustomToken(auth, initialAuthToken);
+                } else {
+                    await signInAnonymously(auth);
+                }
+
+                onAuthStateChanged(auth, (user) => {
+                    if (user) {
+                        userId = user.uid;
+                        userIdDisplay.textContent = `User ID: ${userId}`;
+                        isAuthReady = true;
+                        // Setup listeners only once auth is confirmed
+                        setupAuthAndListeners();
+                        setupLogListener();
+                    } else {
+                        userId = null;
+                        userIdDisplay.textContent = 'Anonymous session. Logging is limited.';
+                        isAuthReady = true;
+                    }
+                    // Run initial status check after auth completes
+                    checkUserStatus(); 
+                });
+
+            } catch (error) {
+                console.error("Firebase initialization or sign-in failed:", error);
+                userIdDisplay.textContent = 'Initialization Error.';
+            }
+        }
+        
+        // --- CLIENT-SIDE LOGIC (Updated) ---
 
         // Get VCF State: LOCKED_FOR_TASK, UNLOCKED_DOWNLOAD, LOCKED_FOR_TOMORROW
         function getVcfState(vcfId) {
@@ -411,7 +674,7 @@
                 
                 if (state === 'LOCKED_FOR_TASK') {
                     buttonHTML = `
-                        <button onclick="handleShareTaskClick(${vcf.id})" class="w-full bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:bg-slate-200 transition-all text-sm group">
+                        <button onclick="handleShareTaskClick(${vcf.id})" ${isVerificationAttempting ? 'disabled' : ''} class="w-full ${isVerificationAttempting ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-slate-100 text-slate-500 active:bg-slate-200'} font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all text-sm group">
                            <i data-lucide="share-2" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i> 
                            SHARE TO UNLOCK (${progress}/${CONFIG.shareTargetUnlock})
                         </button>
@@ -429,7 +692,7 @@
                 } else if (state === 'LOCKED_FOR_TOMORROW') {
                     buttonHTML = `
                         <div class="space-y-3 pt-2">
-                            <button onclick="handleShareTaskClick(0)" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                            <button onclick="handleShareTaskClick(0)" ${isVerificationAttempting ? 'disabled' : ''} class="w-full ${isVerificationAttempting ? 'bg-slate-300 text-slate-500 cursor-not-allowed' : 'bg-emerald-600 text-white active:scale-95'} font-bold py-4 rounded-2xl flex items-center justify-center gap-3 transition-all text-sm">
                                 <i data-lucide="share-2" class="w-4 h-4 text-white"></i> SHARE TO ${CONFIG.shareTargetPostDownload} GROUPS/PEOPLE
                             </button>
                             <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="block w-full text-center bg-blue-50 text-blue-700 font-bold py-4 rounded-2xl text-sm">
@@ -479,88 +742,35 @@
         // --- HANDLERS ---
 
         function handleShareTaskClick(vcfId) {
+            if (!isAuthReady || !userId) {
+                showAlert('Authentication Required', 'Please wait a moment while the system authenticates your session. Then try again.', 'refresh-cw');
+                return;
+            }
+
+            // Set global tracking state
             currentVcfId = vcfId;
+            isVerificationAttempting = true;
+            renderVcfFiles(); // Disable other buttons
+
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
             
-            // 1. Record share start time (Sincerity Bot)
-            localStorage.setItem(SHARE_DELAY_START_KEY, Date.now());
-
-            // 2. Open WhatsApp
+            // Open WhatsApp
             window.open(shareUrl, '_blank');
             
-            // 3. Start verification process immediately
+            // Show the waiting modal and start the focus tracking process (handleVisibilityChange listens for return)
             showVerificationModal();
         }
 
         function showVerificationModal() {
-            const modal = document.getElementById('verify-modal');
-            modal.style.display = 'flex';
-            document.getElementById('verification-title').innerText = "Initiating Cross-Platform Verification...";
-            document.getElementById('scan-line').style.animation = 'scan 6s infinite linear alternate';
-            
-            const steps = [
-                { id: 'step-1', text: 'WhatsApp Handshake established', delay: 1000 },
-                { id: 'step-2', text: 'Metadata Extraction complete', delay: 2000 },
-                { id: 'step-3', text: 'Status Post Entry confirmed', delay: 3000 } // Total 6s
-            ];
-
-            let currentDelay = 0;
-            
-            // Reset steps
-            document.querySelectorAll('.verification-step').forEach(el => {
-                el.classList.remove('text-emerald-600', 'font-bold');
-                el.classList.add('text-slate-500');
-                el.querySelector('.status-icon').innerHTML = `<i data-lucide="loader" class="w-4 h-4 animate-spin text-slate-300"></i>`;
-                el.querySelector('i[data-lucide="check-circle"]').classList.remove('text-emerald-600');
-                el.querySelector('i[data-lucide="check-circle"]').classList.add('text-slate-400');
-            });
-            document.getElementById('verification-progress').style.width = '0%';
+            verifyModal.style.display = 'flex';
+            document.getElementById('verification-title').innerText = "Awaiting Cross-Platform Verification";
+            document.getElementById('verification-subtitle').innerText = "The system is waiting for you to complete the task and return.";
+            updateModalStatusUI('red', '<svg class="w-6 h-6 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 4m0 5l-.7 4.5 1.5-1.5M4 4h5.042m-.918 21.5-4.75 4.75m0 0H7.5V11.25M10.5 11.25V7.5h-4.75M19 12h3.25m-15.5-2.75l-4.75 4.75M16.5 16.5h-4.75V19m4.75 0h-4.75M7 11v11m10-4v4"></path></svg>', 'PENDING: Waiting for loss of focus...');
             lucide.createIcons();
-            
-            steps.forEach((step, index) => {
-                currentDelay += step.delay;
-                setTimeout(() => {
-                    const el = document.getElementById(step.id);
-                    if (el) {
-                        el.classList.remove('text-slate-500');
-                        el.classList.add('text-emerald-600', 'font-bold');
-                        el.querySelector('.status-icon').innerHTML = `<i data-lucide="check-circle" class="w-4 h-4 text-emerald-600"></i>`;
-                        el.querySelector('i[data-lucide="check-circle"]').classList.add('text-emerald-600');
-                        el.querySelector('i[data-lucide="check-circle"]').classList.remove('text-slate-400');
-                    }
-                    document.getElementById('verification-progress').style.width = `${((index + 1) / steps.length) * 100}%`;
-
-                    if (index === steps.length - 1) {
-                        // Final step completed
-                        setTimeout(() => handleVerificationComplete(currentVcfId), 500);
-                    }
-                    lucide.createIcons();
-                }, currentDelay);
-            });
         }
 
-        function handleVerificationComplete(vcfId) {
-            const shareTimeStart = parseInt(localStorage.getItem(SHARE_DELAY_START_KEY));
-            const timeElapsed = Date.now() - shareTimeStart;
-            
-            const modal = document.getElementById('verify-modal');
-            modal.style.display = 'none';
-            document.getElementById('scan-line').style.animation = 'none';
-
-            // Check if this is a post-download share (vcfId 0)
-            if (vcfId === 0) {
-                showAlert('Share Acknowledged', `Your share has been detected and logged for the next batch drop. Thank you for preparing!`, 'share-2');
-                return;
-            }
-
-            // Sincerity Bot Check
-            if (timeElapsed < MIN_SHARE_TIME) {
-                showAlert('Security Alert: No Share Initiated', `System detect no sharing was initiated (Time Elapsed: ${Math.round(timeElapsed/1000)}s). Please spend at least 5 seconds on WhatsApp to complete the share task.`, 'alert-triangle');
-                renderVcfFiles();
-                return;
-            }
-
-            // Task successful, update progress for the specific VCF
+        /** Updates the task progress locally after successful verification. */
+        function processSuccessfulVerification(vcfId) {
             const taskProgress = JSON.parse(localStorage.getItem(TASK_PROGRESS_KEY) || '{}');
             let progress = taskProgress[vcfId] || 0;
             
@@ -575,7 +785,6 @@
                     showAlert('Sharing Progress', `Share detected! You have completed ${progress} of ${CONFIG.shareTargetUnlock} shares for Batch ${vcfId}. Keep going!`, 'share-2');
                 }
             }
-            renderVcfFiles();
         }
 
         function performDownload(vcfId, filename) {
@@ -613,23 +822,27 @@
             const memberView = document.getElementById('member-view');
             const lockedDown = document.getElementById('download-locked');
             const unlockedDown = document.getElementById('download-unlocked');
-            const statusDiv = document.getElementById('user-status');
-
+            const statusIndicator = document.querySelector('#user-status > span:first-child');
+            
             if (isRegistered) {
                 guestView.classList.add('hidden');
                 memberView.classList.remove('hidden');
                 lockedDown.classList.add('hidden');
                 unlockedDown.classList.remove('hidden');
-                statusDiv.innerHTML = `<span class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
-                                       <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter">Member</span>`;
+                statusIndicator.className = "h-2 w-2 bg-emerald-500 rounded-full animate-pulse";
+                authStatusText.textContent = 'Member';
+                authStatusText.classList.remove('text-slate-400');
+                authStatusText.classList.add('text-emerald-600');
                 renderVcfFiles();
             } else {
                 guestView.classList.remove('hidden');
                 memberView.classList.add('hidden');
                 lockedDown.classList.remove('hidden');
                 unlockedDown.classList.add('hidden');
-                statusDiv.innerHTML = `<span class="h-2 w-2 bg-slate-300 rounded-full"></span>
-                                       <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Guest</span>`;
+                statusIndicator.className = "h-2 w-2 bg-slate-300 rounded-full";
+                authStatusText.textContent = 'Guest';
+                authStatusText.classList.remove('text-emerald-600');
+                authStatusText.classList.add('text-slate-400');
             }
             lucide.createIcons();
         }
@@ -669,7 +882,7 @@
         states.forEach(s => stSelect.add(new Option(s, s)));
 
         lucide.createIcons();
-        checkUserStatus();
+        initializeFirebase();
 
         // Initial welcome message (disclaimer)
         if(!localStorage.getItem('sawDisclaimer')) {
