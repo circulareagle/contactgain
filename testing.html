@@ -308,10 +308,27 @@
         import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
         import { getFirestore, doc, addDoc, onSnapshot, collection, query, orderBy, serverTimestamp, setLogLevel } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
 
-        // IMPORTANT: The environment variables for Firebase are mandatory.
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
-        const firebaseConfig = JSON.parse(typeof __firebase_config !== 'undefined' ? __firebase_config : '{}');
-        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+        // 🚨 CRITICAL FIX: HARDCODED FIREBASE CONFIGURATION for GitHub Pages 🚨
+        // This replaces the environment variables (__app_id, etc.) that caused errors
+        // outside of the Google Canvas environment, ensuring Firebase initializes correctly.
+        
+        const REAL_FIREBASE_CONFIG = {
+            apiKey: "AIzaSyAxsQWe4ZLpJpcJa1-xsoGzExLjxrGDO2k",
+            authDomain: "naijapro-vcf-app.firebaseapp.com",
+            projectId: "naijapro-vcf-app",
+            storageBucket: "naijapro-vcf-app.firebasestorage.app",
+            messagingSenderId: "562807563756",
+            appId: "1:562807563756:web:3287550789100e8e738cc9"
+        };
+        
+        // --- MAPPING TO EXISTING CODE VARIABLES ---
+        // Use the actual configuration for initialization
+        const firebaseConfig = REAL_FIREBASE_CONFIG;
+        // Use the projectId as the App ID for consistency in Firestore paths
+        const appId = REAL_FIREBASE_CONFIG.projectId; 
+        // No custom token is available or needed when hosted on GitHub Pages
+        const initialAuthToken = null; 
+
         
         // --- CONFIGURABLE DATA & CORE STATE ---
         const CONFIG = {
@@ -410,6 +427,11 @@
 
         async function initializeFirebase() {
             try {
+                // Ensure config is valid before proceeding
+                if (!firebaseConfig.projectId) {
+                    throw new Error("Firebase configuration is missing or invalid. Check your hardcoded values.");
+                }
+
                 setLogLevel('debug'); // Enable Firestore logging
                 const app = initializeApp(firebaseConfig);
                 db = getFirestore(app);
@@ -421,17 +443,23 @@
                         userId = user.uid;
                         userInfo.textContent = `User ID: ${userId}`;
                         isAuthReady = true;
-                        // Sign in if custom token is present, otherwise anonymous sign-in already happened
-                        if (initialAuthToken) {
+                        
+                        // Use signInAnonymously if no custom token exists (standard for GitHub hosting)
+                        if (!initialAuthToken) {
+                            // We already have a user object, no need to sign in again immediately,
+                            // just proceed with listeners.
+                        } else {
+                            // If somehow a custom token was provided, sign in with it (unlikely on GH Pages)
                             await signInWithCustomToken(auth, initialAuthToken);
                         }
                         
                         setupVisibilityListener();
                         setupLogListener();
                     } else {
-                        // Attempt anonymous sign-in if no user is found (e.g., initial load without custom token)
+                        // Attempt anonymous sign-in if no user is found
                         try {
                             await signInAnonymously(auth);
+                            // onAuthStateChanged will be triggered again with the new user
                         } catch (anonError) {
                             console.error("Anonymous sign-in failed:", anonError);
                             userId = 'anonymous_user';
@@ -444,7 +472,7 @@
 
             } catch (error) {
                 console.error("Firebase initialization or sign-in failed:", error);
-                updateStatusUI('red', '<i data-lucide="alert-triangle" class="w-6 h-6"></i>', 'Initialization Error.');
+                updateStatusUI('red', '<i data-lucide="alert-triangle" class="w-6 h-6"></i>', `Initialization Error: ${error.message}`);
             }
         }
         
