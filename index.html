@@ -456,7 +456,7 @@
             
             window.onfocus = () => {
                 window.onfocus = null;
-                const elapsed = Date.now() - shareStartTime;
+                const elapsed = Date.() - shareStartTime;
                 if (elapsed < CONFIG.minTimeOnWhatsApp) {
                     showAlert('Security Alert', 'System detected no sharing was initiated. Please spend more than 10 seconds sharing the link to your status and groups.', 'shield-alert');
                 } else {
