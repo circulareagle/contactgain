@@ -39,7 +39,7 @@
             box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.1);
         }
         
-        #custom-alert { display: none; }
+        #custom-alert, #whatsapp-promo, #verify-modal { display: none; }
 
         /* Pipeline Styles */
         .pipeline-container {
@@ -62,8 +62,21 @@
                 #dc2626 20px
             );
         }
-        .pipeline-empty {
-            background: #cbd5e1 !important;
+        .pipeline-empty { background: #cbd5e1 !important; }
+
+        /* Scanner Animation */
+        @keyframes scan {
+            0% { top: 0%; }
+            50% { top: 100%; }
+            100% { top: 0%; }
+        }
+        .scanner-line {
+            position: absolute;
+            width: 100%;
+            height: 2px;
+            background: rgba(16, 185, 129, 0.5);
+            box-shadow: 0 0 8px #10b981;
+            animation: scan 2s linear infinite;
         }
     </style>
 </head>
@@ -83,6 +96,39 @@
         </div>
     </header>
 
+    <!-- Verification Modal -->
+    <div id="verify-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-6 bg-slate-900/80 backdrop-blur-sm">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl relative overflow-hidden">
+            <div class="scanner-line"></div>
+            <div class="text-center mb-6">
+                <div class="inline-block p-3 bg-emerald-50 rounded-2xl mb-4">
+                    <i data-lucide="shield-check" class="text-emerald-600 w-8 h-8 animate-pulse"></i>
+                </div>
+                <h3 class="text-xl font-bold text-slate-900">System Verification</h3>
+                <p class="text-xs text-slate-400 mt-1">Performing cross-platform check...</p>
+            </div>
+
+            <div class="space-y-4 mb-8">
+                <div id="step-1" class="flex items-center gap-3 text-slate-400">
+                    <div class="step-icon w-5 h-5 flex items-center justify-center"><div class="w-2 h-2 bg-slate-200 rounded-full"></div></div>
+                    <span class="text-sm font-semibold">Link Origin Check</span>
+                </div>
+                <div id="step-2" class="flex items-center gap-3 text-slate-400">
+                    <div class="step-icon w-5 h-5 flex items-center justify-center"><div class="w-2 h-2 bg-slate-200 rounded-full"></div></div>
+                    <span class="text-sm font-semibold">Metadata Extraction</span>
+                </div>
+                <div id="step-3" class="flex items-center gap-3 text-slate-400">
+                    <div class="step-icon w-5 h-5 flex items-center justify-center"><div class="w-2 h-2 bg-slate-200 rounded-full"></div></div>
+                    <span class="text-sm font-semibold">Status Post Handshake</span>
+                </div>
+            </div>
+
+            <div class="w-full bg-slate-100 h-1.5 rounded-full overflow-hidden">
+                <div id="verify-progress" class="h-full bg-emerald-500 transition-all duration-300" style="width: 0%"></div>
+            </div>
+        </div>
+    </div>
+
     <!-- Alert Modal -->
     <div id="custom-alert" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/40 backdrop-blur-md">
         <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl">
@@ -90,6 +136,21 @@
             <h3 id="alert-title" class="text-xl font-bold text-slate-900 mb-2 text-center">Notice</h3>
             <p id="alert-message" class="text-sm text-slate-600 mb-8 leading-relaxed text-center"></p>
             <button onclick="closeAlert()" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl transition-all active:scale-95 shadow-lg shadow-emerald-200">Got it!</button>
+        </div>
+    </div>
+
+    <!-- WhatsApp Channel Promo Modal -->
+    <div id="whatsapp-promo" class="fixed inset-0 z-50 flex items-center justify-center p-6 bg-slate-900/60 backdrop-blur-md">
+        <div class="bg-white rounded-3xl p-8 max-w-sm w-full shadow-2xl text-center">
+            <div class="bg-emerald-100 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+                <i data-lucide="bell" class="text-emerald-600 w-8 h-8"></i>
+            </div>
+            <h3 class="text-xl font-bold text-slate-900 mb-2">Stay Updated!</h3>
+            <p class="text-sm text-slate-600 mb-8 leading-relaxed">Join our Official WhatsApp Channel to get instant notifications whenever new VCF batches are uploaded.</p>
+            <div class="space-y-3">
+                <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="block w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl shadow-lg shadow-emerald-200">Join Channel Now</a>
+                <button onclick="closePromo()" class="w-full text-slate-400 font-bold py-2 text-sm">Proceed to Files</button>
+            </div>
         </div>
     </div>
 
@@ -102,7 +163,7 @@
                     <h2 class="text-2xl font-bold">Welcome Back!</h2>
                     <p class="text-sm opacity-90 mt-2">You are a verified member. Access your 10 VCF files below.</p>
                     <div class="mt-6">
-                         <button onclick="switchTab('download')" class="w-full bg-white text-emerald-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
+                         <button onclick="handleGoToFiles()" class="w-full bg-white text-emerald-700 font-bold py-4 rounded-2xl flex items-center justify-center gap-2">
                             <i data-lucide="file-down" class="w-5 h-5"></i> Go to VCF Files
                         </button>
                     </div>
@@ -219,7 +280,7 @@
                         <p class="text-xs text-blue-800/80 leading-relaxed">
                             A new batch of vendors is added every 24-48 hours. 
                             <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="text-blue-700 font-bold underline">Join our Official WhatsApp Channel</a> 
-                            for files upload updates.
+                            for files upload updates without re-registering.
                         </p>
                     </div>
                 </div>
@@ -261,43 +322,58 @@
     </nav>
 
     <script>
-        // CONFIGURABLE DATA
         const CONFIG = {
-            updateDate: "Updated Today, 10:34 PM",
-            shareTarget: 5, // Number of times they need to click share
-            shareText: "Hey! Join the NaijaPro networking platform to grow your business contacts for free. Register here: " + window.location.href,
+            updateDate: "Updated Today, 11:45 PM",
+            shareTarget: 4, 
+            minTimeOnWhatsApp: 6000, // 6 seconds minimum
+            shareText: "Grow your business contacts for free on NaijaPro! Register and get the latest VCF batches here: " + window.location.href,
             vcfData: [
-                { id: 1, count: 16, status: "Ongoing" },
-                { id: 2, count: 0, status: "Not yet activated" },
-                { id: 3, count: 0, status: "Not yet activated" },
-                { id: 4, count: 0, status: "Not yet activated" },
-                { id: 5, count: 0, status: "Not yet activated" },
-                { id: 6, count: 0, status: "Not yet activated" },
-                { id: 7, count: 0, status: "Not yet activated" },
-                { id: 8, count: 0, status: "Not yet activated" },
-                { id: 9, count: 0, status: "Not yet activated" },
-                { id: 10, count: 0, status: "Not yet activated" }
+                { id: 1, count: 842, status: "Ongoing", file: "contacts.vcf" },
+                { id: 2, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_2.vcf" },
+                { id: 3, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_3.vcf" },
+                { id: 4, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_4.vcf" },
+                { id: 5, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_5.vcf" },
+                { id: 6, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_6.vcf" },
+                { id: 7, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_7.vcf" },
+                { id: 8, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_8.vcf" },
+                { id: 9, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_9.vcf" },
+                { id: 10, count: 0, status: "Not yet activated", file: "NaijaPro_Batch_10.vcf" }
             ]
         };
 
-        let submitted = false;
         const IS_REGISTERED_KEY = 'naijapro_user_registered';
-        const SHARE_COUNT_KEY = 'naijapro_share_count';
+        const TASK_PROGRESS_KEY = 'naijapro_task_map'; // Object storing {vcfId: count}
+        const DOWNLOADED_HISTORY_KEY = 'naijapro_downloaded_history';
         
+        let submitted = false;
+        let shareStartTime = 0;
+        let activeVcfId = null;
+
         const categories = ["Fashion & Lifestyle", "Gadgets & Electronics", "Real Estate", "Beauty & Skincare", "Logistics & Delivery", "Digital Assets/Crypto", "Automobiles", "Food & Groceries", "Interior Decor", "Education", "Consultancy", "Others"];
         const states = ["Lagos", "Abuja (FCT)", "Rivers", "Oyo", "Kano", "Ogun", "Enugu", "Delta", "Anambra", "Edo", "Abia", "Adamawa", "Akwa Ibom", "Bauchi", "Bayelsa", "Benue", "Borno", "Cross River", "Ebonyi", "Ekiti", "Gombe", "Imo", "Jigawa", "Kaduna", "Katsina", "Kebbi", "Kogi", "Kwara", "Nasarawa", "Niger", "Ondo", "Osun", "Plateau", "Sokoto", "Taraba", "Yobe", "Zamfara"];
         
-        // Render VCF List
+        function getTaskProgress() {
+            return JSON.parse(localStorage.getItem(TASK_PROGRESS_KEY) || '{}');
+        }
+
+        function getDownloadedHistory() {
+            return JSON.parse(localStorage.getItem(DOWNLOADED_HISTORY_KEY) || '[]');
+        }
+
         function renderVcfFiles() {
             const container = document.getElementById('vcf-list');
-            const shareCount = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
-            const isUnlocked = shareCount >= CONFIG.shareTarget;
+            const progress = getTaskProgress();
+            const history = getDownloadedHistory();
             
             document.getElementById('update-date').innerText = CONFIG.updateDate;
 
             container.innerHTML = CONFIG.vcfData.map(vcf => {
+                const shareCount = progress[vcf.id] || 0;
+                const hasDownloaded = history.includes(vcf.id);
+                const isUnlocked = shareCount >= CONFIG.shareTarget;
                 const percentage = (vcf.count / 1000) * 100;
-                const statusColor = vcf.id === 1 ? 'text-red-600 font-bold' : 'text-slate-400 font-medium';
+                const isFirst = vcf.id === 1;
+                const statusColor = isFirst ? 'text-red-600 font-extrabold' : 'text-slate-400 font-bold';
                 const pipelineColorClass = vcf.count > 0 ? '' : 'pipeline-empty';
                 
                 let pipelineText = "Empty - Not yet started";
@@ -305,11 +381,50 @@
                 else if(vcf.count > 700) pipelineText = "Almost Full";
                 else if(vcf.count > 0) pipelineText = "Filing in progress...";
 
+                let actionHtml = '';
+                
+                if (hasDownloaded) {
+                    actionHtml = `
+                        <div class="space-y-4 pt-2">
+                             <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                                <i data-lucide="users" class="w-4 h-4"></i> JOIN WHATSAPP CHANNEL
+                            </a>
+                            <p class="text-[11px] font-bold text-red-600 text-center leading-tight">
+                                This file has been locked again for tomorrow's next VCF. Share to your status + 4 Groups/People to prepare.
+                            </p>
+                        </div>
+                    `;
+                } else if (isUnlocked) {
+                    actionHtml = `
+                        <div class="space-y-3">
+                            <a href="${vcf.file}" download="${vcf.file}" onclick="handleDownload(${vcf.id})" 
+                               class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
+                            </a>
+                            <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                                <i data-lucide="users" class="w-4 h-4"></i> JOIN WHATSAPP CHANNEL
+                            </a>
+                        </div>
+                    `;
+                } else {
+                    actionHtml = `
+                        <div class="space-y-3">
+                            <button onclick="initiateShare(${vcf.id})" class="w-full bg-slate-100 text-slate-500 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:bg-slate-200 transition-all text-sm group">
+                               <i data-lucide="share-2" class="w-4 h-4 text-emerald-500 group-hover:scale-110 transition-transform"></i> 
+                               SHARE TO UNLOCK (${shareCount}/${CONFIG.shareTarget})
+                            </button>
+                            <a href="https://whatsapp.com/channel/0029VbC3ITpHVvTZ5btPTn0h" target="_blank" class="w-full bg-emerald-600 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
+                                <i data-lucide="users" class="w-4 h-4"></i> JOIN WHATSAPP CHANNEL
+                            </a>
+                        </div>
+                    `;
+                }
+
                 return `
                     <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 space-y-4">
                         <div class="flex justify-between items-start">
                             <div class="flex gap-4 items-center">
-                                <div class="bg-slate-50 text-slate-400 p-4 rounded-2xl">
+                                <div class="bg-slate-50 ${isFirst ? 'text-emerald-600' : 'text-slate-400'} p-4 rounded-2xl">
                                     <i data-lucide="file-spreadsheet" class="w-6 h-6"></i>
                                 </div>
                                 <div>
@@ -327,41 +442,98 @@
                             <div class="pipeline-container">
                                 <div class="pipeline-fill ${pipelineColorClass}" style="width: ${percentage}%"></div>
                             </div>
-                            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${pipelineText}</p>
+                            <div class="flex justify-between items-center">
+                                <p class="text-[9px] font-bold text-slate-400 uppercase tracking-tighter">${pipelineText}</p>
+                                ${vcf.count > 0 ? `<span class="text-[9px] font-bold text-red-500">${Math.round(percentage)}%</span>` : ''}
+                            </div>
                         </div>
 
-                        ${isUnlocked ? 
-                            `<a href="contacts.vcf" download="NaijaPro_Batch_${vcf.id}.vcf" 
-                               class="block w-full bg-slate-900 text-white font-bold py-4 rounded-2xl flex items-center justify-center gap-3 active:scale-95 transition-all text-sm">
-                               <i data-lucide="download" class="w-4 h-4 text-emerald-400"></i> DOWNLOAD BATCH ${vcf.id}
-                            </a>` :
-                            `<button onclick="handleTaskClick()" class="w-full bg-slate-100 text-slate-400 font-bold py-4 rounded-2xl flex items-center justify-center gap-3 cursor-not-allowed text-sm">
-                               <i data-lucide="lock" class="w-4 h-4"></i> TASK: SHARE TO UNLOCK (${shareCount}/${CONFIG.shareTarget})
-                            </button>`
-                        }
+                        ${actionHtml}
                     </div>
                 `;
             }).join('');
             lucide.createIcons();
         }
 
-        function handleTaskClick() {
+        function initiateShare(vcfId) {
+            activeVcfId = vcfId;
+            shareStartTime = Date.now();
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
-            
-            // Logic: User clicks, we assume they shared (detecting actual WhatsApp status post is impossible via web API)
-            // But we simulate a "Verification in progress" or just count the clicks.
             window.open(shareUrl, '_blank');
             
-            let count = parseInt(localStorage.getItem(SHARE_COUNT_KEY) || 0);
-            count++;
-            localStorage.setItem(SHARE_COUNT_KEY, count);
+            // Wait for user to return
+            window.onfocus = () => {
+                window.onfocus = null;
+                const elapsed = Date.now() - shareStartTime;
+                if (elapsed < CONFIG.minTimeOnWhatsApp) {
+                    showAlert('Security Alert', 'System detected no sharing was initiated. Please spend more than 10 seconds sharing the link to your status and groups.', 'shield-alert');
+                } else {
+                    performVerification();
+                }
+            };
+        }
+
+        async function performVerification() {
+            const modal = document.getElementById('verify-modal');
+            const progress = document.getElementById('verify-progress');
+            modal.style.display = 'flex';
             
-            if(count >= CONFIG.shareTarget) {
-                showAlert('Task Completed!', 'Thank you for supporting the platform. All VCF files are now unlocked for download.', 'check-circle');
-            } else {
-                showAlert('Sharing...', `You have shared ${count}/${CONFIG.shareTarget} times. Share to your WhatsApp Status / Groups/ Friends to fully unlock the files.`, 'share-2');
+            const steps = [
+                { id: 'step-1', delay: 1800 },
+                { id: 'step-2', delay: 2200 },
+                { id: 'step-3', delay: 2000 }
+            ];
+
+            for (let i = 0; i < steps.length; i++) {
+                const step = steps[i];
+                const el = document.getElementById(step.id);
+                el.classList.add('text-emerald-500');
+                
+                await new Promise(r => setTimeout(r, step.delay));
+                
+                el.querySelector('.step-icon').innerHTML = `<i data-lucide="check-circle-2" class="w-5 h-5 text-emerald-500"></i>`;
+                progress.style.width = `${(i + 1) * 33.3}%`;
+                lucide.createIcons();
             }
-            renderVcfFiles();
+
+            setTimeout(() => {
+                modal.style.display = 'none';
+                // Reset UI for next time
+                progress.style.width = '0%';
+                ['step-1','step-2','step-3'].forEach(id => {
+                    const el = document.getElementById(id);
+                    el.classList.remove('text-emerald-500');
+                    el.querySelector('.step-icon').innerHTML = `<div class="w-2 h-2 bg-slate-200 rounded-full"></div>`;
+                });
+
+                // Update Progress
+                const taskMap = getTaskProgress();
+                taskMap[activeVcfId] = (taskMap[activeVcfId] || 0) + 1;
+                localStorage.setItem(TASK_PROGRESS_KEY, JSON.stringify(taskMap));
+                
+                if (taskMap[activeVcfId] >= CONFIG.shareTarget) {
+                    showAlert('Batch Unlocked', `Congratulations! Batch ${activeVcfId} is now ready for download.`, 'check-circle');
+                }
+                renderVcfFiles();
+            }, 800);
+        }
+
+        function handleDownload(vcfId) {
+            const history = getDownloadedHistory();
+            if (!history.includes(vcfId)) {
+                history.push(vcfId);
+                localStorage.setItem(DOWNLOADED_HISTORY_KEY, JSON.stringify(history));
+            }
+            setTimeout(() => renderVcfFiles(), 1500);
+        }
+
+        function handleGoToFiles() {
+            document.getElementById('whatsapp-promo').style.display = 'flex';
+        }
+
+        function closePromo() {
+            document.getElementById('whatsapp-promo').style.display = 'none';
+            switchTab('download');
         }
 
         function checkUserStatus() {
@@ -377,8 +549,8 @@
                 memberView.classList.remove('hidden');
                 lockedDown.classList.add('hidden');
                 unlockedDown.classList.remove('hidden');
-                statusDiv.innerHTML = `<span class="h-2 w-2 bg-emerald-500 rounded-full"></span>
-                                       <span class="text-[10px] font-bold text-emerald-600 uppercase">Member</span>`;
+                statusDiv.innerHTML = `<span class="h-2 w-2 bg-emerald-500 rounded-full animate-pulse"></span>
+                                       <span class="text-[10px] font-bold text-emerald-600 uppercase tracking-tighter">Member</span>`;
                 renderVcfFiles();
             } else {
                 guestView.classList.remove('hidden');
@@ -386,7 +558,7 @@
                 lockedDown.classList.remove('hidden');
                 unlockedDown.classList.add('hidden');
                 statusDiv.innerHTML = `<span class="h-2 w-2 bg-slate-300 rounded-full"></span>
-                                       <span class="text-[10px] font-bold text-slate-400 uppercase">Guest</span>`;
+                                       <span class="text-[10px] font-bold text-slate-400 uppercase tracking-tighter">Guest</span>`;
             }
             lucide.createIcons();
         }
@@ -428,12 +600,13 @@
         lucide.createIcons();
         checkUserStatus();
 
-        if(!localStorage.getItem('sawDisclaimer')) {
+        // Welcome Promo Interstitial
+        if (localStorage.getItem(IS_REGISTERED_KEY) && !sessionStorage.getItem('notifiedChannel')) {
             setTimeout(() => {
-                showAlert('Growth is the key!', 'Access to files requires a one-time registration and a quick share task to support the community.', 'heart');
-                localStorage.setItem('sawDisclaimer', 'true');
-            }, 800);
+                document.getElementById('whatsapp-promo').style.display = 'flex';
+                sessionStorage.setItem('notifiedChannel', 'true');
+            }, 2000);
         }
     </script>
 </body>
-</html>
+    </html>
