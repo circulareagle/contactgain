@@ -454,7 +454,14 @@
             const shareUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(CONFIG.shareText)}`;
             window.open(shareUrl, '_blank');
             
-            
+            window.onfocus = () => {
+                window.onfocus = null;
+                const elapsed = Date.now() - shareStartTime;
+                if (elapsed < CONFIG.minTimeOnWhatsApp) {
+                    showAlert('Security Alert', 'System detected no sharing was initiated. Please spend more than 10 seconds sharing the link to your status and groups.', 'shield-alert');
+                } else {
+                    performVerification();
+                }
             };
         }
 
