@@ -1,0 +1,29 @@
+User-agent: *
+
+# 1. THE OPEN DOOR
+# Allows all current and future public pages
+Allow: /
+
+# 2. THE LOCKS
+# Block folders containing source code or sensitive data
+Disallow: /src/
+Disallow: /private/
+Disallow: /config/
+
+# 3. FILE TYPE PROTECTION
+# Prevents sensitive file extensions from appearing in search results
+Disallow: /*.md$
+Disallow: /*.json$
+Disallow: /*.xml$
+Disallow: /*.yml$
+Disallow: /*.env$
+Disallow: /*.log$
+Disallow: /*.vcf$
+
+# 4. VERSION CONTROL
+Disallow: /.git/
+Disallow: /.github/
+
+# 5. THE MAP
+# Help search engines find all your pages quickly
+Sitemap: https://vcf.circulareagle.com/sitemap.xml
