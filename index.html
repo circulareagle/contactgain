@@ -5,87 +5,55 @@
     <meta name="robots" content="noindex, nofollow">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Moved | Redirecting</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
-        
-        body {
-            font-family: 'Inter', sans-serif;
-            background-color: #f0fdf4; /* Very light green background */
-        }
-
-        .fade-in {
-            animation: fadeIn 0.8s ease-out forwards;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        .pulse-soft {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.8; }
-        }
-    </style>
+    <!-- Link to the separate CSS file -->
+    <link rel="stylesheet" href="style.css">
 </head>
-<body class="min-h-screen flex items-center justify-center p-6">
+<body class="page-container">
 
-    <div class="max-w-md w-full bg-white rounded-3xl shadow-xl shadow-green-100 p-8 text-center fade-in">
+    <div class="card fade-in">
         <!-- Icon/Illustration -->
-        <div class="mb-8 flex justify-center">
-            <div class="bg-green-100 p-4 rounded-full">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <div class="icon-wrapper">
+            <div class="icon-circle">
+                <svg xmlns="http://www.w3.org/2000/svg" class="icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6" />
                 </svg>
             </div>
         </div>
 
         <!-- Text Content -->
-        <h1 class="text-3xl font-bold text-gray-800 mb-4">We've Moved!</h1>
-        <p class="text-gray-600 mb-8 leading-relaxed">
+        <h1 class="title">We've Moved!</h1>
+        <p class="description">
             The page you are looking for has been relocated to a new address to provide you with a better experience.
         </p>
 
         <!-- The Link Button -->
-        <a href="https://example.com/new-page" 
-           class="inline-block w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-4 px-6 rounded-2xl transition duration-300 ease-in-out transform hover:-translate-y-1 shadow-lg shadow-green-200 active:scale-95">
+        <a href="https://vcf.applifier.name.ng" class="btn-primary">
             Go to New URL
         </a>
 
         <!-- Secondary Info -->
-        <div class="mt-8 pt-6 border-t border-gray-100">
-            <p class="text-sm text-gray-400">
+        <div class="footer">
+            <p class="footer-text">
                 Please update your bookmarks. <br>
-                Redirecting automatically in <span id="timer" class="font-bold text-green-500">10</span> seconds...
+                Redirecting automatically in <span id="timer" class="timer-highlight">10</span> seconds...
             </p>
         </div>
     </div>
 
     <script>
-        // Optional: Auto-redirect logic
         let timeLeft = 10;
         const timerElement = document.getElementById('timer');
-        const targetUrl = "https://example.com/new-page";
+        const targetUrl = "https://vcf.applifier.name.ng";
 
         const countdown = setInterval(() => {
             timeLeft--;
-            timerElement.textContent = timeLeft;
+            if (timerElement) timerElement.textContent = timeLeft;
             
             if (timeLeft <= 0) {
                 clearInterval(countdown);
-                // window.location.href = targetUrl; // Uncomment this to enable actual redirection
+                // window.location.href = targetUrl;
             }
         }, 1000);
-
-        // Simple button interaction feedback
-        document.querySelector('a').addEventListener('click', (e) => {
-            console.log("Navigating to new destination...");
-        });
     </script>
 </body>
 </html>
