@@ -1,0 +1,124 @@
+/* Google Font Import */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap');
+
+/* Reset & Base Styles */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: #f0fdf4; /* Very light green */
+    color: #1f2937;
+}
+
+.page-container {
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1.5rem;
+}
+
+/* Card Styling */
+.card {
+    max-width: 28rem;
+    width: 100%;
+    background-color: #ffffff;
+    border-radius: 1.5rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 20px 25px -5px rgba(220, 252, 231, 0.5), 0 10px 10px -5px rgba(220, 252, 231, 0.4);
+}
+
+/* Icon Styles */
+.icon-wrapper {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+}
+
+.icon-circle {
+    background-color: #dcfce7;
+    padding: 1rem;
+    border-radius: 9999px;
+}
+
+.icon {
+    height: 3rem;
+    width: 3rem;
+    color: #16a34a;
+}
+
+/* Typography */
+.title {
+    font-size: 1.875rem;
+    font-weight: 700;
+    color: #1f2937;
+    margin-bottom: 1rem;
+}
+
+.description {
+    color: #4b5563;
+    margin-bottom: 2rem;
+    line-height: 1.625;
+}
+
+/* Button Styling */
+.btn-primary {
+    display: inline-block;
+    width: 100%;
+    background-color: #16a34a;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 1rem 1.5rem;
+    border-radius: 1rem;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 15px -3px rgba(22, 163, 74, 0.2);
+}
+
+.btn-primary:hover {
+    background-color: #15803d;
+    transform: translateY(-2px);
+}
+
+.btn-primary:active {
+    transform: scale(0.98);
+}
+
+/* Footer Styling */
+.footer {
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #f3f4f6;
+}
+
+.footer-text {
+    font-size: 0.875rem;
+    color: #9ca3af;
+}
+
+.timer-highlight {
+    font-weight: 700;
+    color: #22c55e;
+}
+
+/* Animations */
+.fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+}
+
+@keyframes fadeIn {
+    from { 
+        opacity: 0; 
+        transform: translateY(10px); 
+    }
+    to { 
+        opacity: 1; 
+        transform: translateY(0); 
+    }
+}
+
