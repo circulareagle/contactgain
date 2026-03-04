@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="robots" content="noindex, nofollow">
+    <meta http-equiv="refresh" content="10;url=https://vcf.applifier.name.ng">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Moved | Redirecting</title>
     <!-- Link to the separate CSS file -->
@@ -49,10 +50,10 @@
             timeLeft--;
             if (timerElement) timerElement.textContent = timeLeft;
             
-            if (timeLeft <= 0) {
-                clearInterval(countdown);
-                // window.location.href = targetUrl;
-            }
+                if (timeLeft <= 0) {
+        clearInterval(countdown);
+        window.location.href = targetUrl; // <--- Remove the // from the start of this line
+    }
         }, 1000);
     </script>
 </body>
